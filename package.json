@@ -21,6 +21,7 @@
     "@stripe/stripe-react-native": "^0.38.0",
     "agora-react-native-rtm": "^1.5.1",
     "agora-rn-uikit": "^5.0.2",
+    "expo": "^51.0.14",
     "react": "18.2.0",
     "react-native": "0.74.2",
     "react-native-gesture-handler": "^2.17.1",
