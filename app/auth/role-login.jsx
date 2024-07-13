@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+// import { StatusBar } from 'expo-status-bar';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dimensions } from 'react-native';
 import { images } from '../../constants';
@@ -29,7 +29,7 @@ const RoleLogin = ({navigation}) => {
                     <View style={styles.innerContainer}>
                         <Text style={styles.headerText}>Login</Text>
                         <View style={styles.contentContainer}>
-                            <Text>Choose your role: Login as doctor to heal or as a patient to be healed</Text>
+                            {/* <Text style={{fontSize:16, color:'black',marginLeft:10, width:'90%'}}>Choose your role: Login as doctor to heal or as a patient to be healed</Text> */}
 
                             <View style={{ marginTop: 20 }}></View>
 
@@ -43,7 +43,7 @@ const RoleLogin = ({navigation}) => {
 
                                         <Image source={images.doctorLogo}  style={styles.dlogo}></Image>
                                         
-                                    <Text style={styles.center}>As Doctor</Text>
+                                    <Text style={ selectedRole === 'doctor' ? [styles.center, {color:'white'}]: styles.center}>As Doctor</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -53,7 +53,7 @@ const RoleLogin = ({navigation}) => {
                                     ]}
                                     onPress={() => setSelectedRole('patient')}>
                                            <Image source={images.patientLogo}  style={styles.dlogo}></Image>
-                                    <Text style={styles.center}>As Patient</Text>
+                                    <Text style={ selectedRole === 'patient' ? [styles.center, {color:'white'}]: styles.center}>As Patient</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -69,7 +69,7 @@ const RoleLogin = ({navigation}) => {
                     </View>
                 </View>
             </ScrollView>
-            <StatusBar backgroundColor="#161622" style="light" />
+            {/* <StatusBar backgroundColor="#161622" style="light" /> */}
         </SafeAreaView>
     );
 };
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
 
     dlogo:{
 
-        height:30,
-        width:30
+        height:40,
+        width:40
 
 
     },
@@ -97,19 +97,23 @@ const styles = StyleSheet.create({
   },
 
     center: {
-       
+       marginLeft:20,
+       alignSelf:'center',
+       color:'#858585',
+       fontSize:16
     },
 
     mainContainer: {
-        height: 45,
-        width: 130,
+        height: 55,
+        width: 175,
         borderWidth: 1, // Border width
         borderColor: 'grey', // Border color
         borderRadius: 30, // Border radius
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'flex-start',
         alignContent: 'center',
-        padding: 10,
+        padding: 5,
+        paddingLeft:14
     },
 
     selectedRole: {
@@ -126,18 +130,13 @@ const styles = StyleSheet.create({
     },
 
     images: {
-        display: 'flex',
-        justifyContent: 'flex-end',
-        flex: 1,
-        width: screenWidth,
-        marginTop: '30%',
-        width:310,
-        marginBottom:0
+        width: '100%',
+        position:'absolute',
+        top:30
     },
 
     container: {
         flex: 1,
-        alignItems: 'center',
         justifyContent: 'flex-end',
         backgroundColor: '#ACCEFA',
     },
@@ -149,15 +148,16 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
     },
     headerText: {
-        marginTop: 20,
+        marginTop: 50,
         fontWeight: 'bold',
         fontSize: 30,
         justifyContent: 'flex-start',
-        marginBottom: 30,
+        marginBottom: 10,
         marginLeft: 20,
+        color:'black'
     },
     contentContainer: {
-        marginLeft: 20,
+        marginLeft: 10,
     },
     footerContainer: {
         display: 'flex',
@@ -166,11 +166,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     spacer: {
-        height: '25%',
+        height: '20%',
     },
     footerText: {
         fontWeight: 'bold',
-        fontSize: 15,
-        marginRight: 15,
-    },
+        fontSize: 18,
+        marginRight:20,
+        color:'black'
+      },
 });

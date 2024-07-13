@@ -1,16 +1,59 @@
-import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
+// import { StatusBar } from "expo-status-bar";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDoctorbyId } from "../../constants/APi";
 
 const DoctorScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const name = "Dr James";
-    const doctorDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitae";
+    const [doctorData, setDoctorData] = useState(null);
+    const [doctor, setDoctor] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const getDoctorData = async () => {
+            try {
+                const response = await AsyncStorage.getItem('DoctorData');
+                if (response !== null) {
+                    const parsedResponse = JSON.parse(response);
+                    setDoctorData(parsedResponse?.user);
+                }
+            } catch (error) {
+                console.log('Error retrieving login response:', error);
+            }
+        };
+
+        getDoctorData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (doctorData) {
+                try {
+                    // Fetch data from API
+                    const doctorsData = await getDoctorbyId(doctorData?._id);
+                    setDoctor(doctorsData);
+                } catch (error) {
+                    console.error('Error fetching doctors:', error);
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [doctorData]);
+
+    console.log('doctor ====> ', doctor)
+    // const name = "Dr James";
+    // const doctorDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitae";
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -18,7 +61,7 @@ const DoctorScreen = () => {
                 <View style={styles.container}>
                     <View style={{ height: 300, width: 300, justifyContent: "center", alignItems: "center" }}>
                         <Image
-                            source={images.doctor}
+                            source={{ uri: doctor?.profileImg }}
                             resizeMode="cover"
                             style={{
                                 height: 300,
@@ -32,12 +75,12 @@ const DoctorScreen = () => {
                             <View style={styles.oval}>
                                 <View style={styles.rowspace}>
                                     <View style={styles.cont}>
-                                        <Text style={styles.t1}>{name}</Text>
-                                        <Text style={styles.t2}>Cardiologist</Text>
+                                        <Text style={styles.t1}>{doctor?.firstName} {doctor?.lastName}</Text>
+                                        <Text style={styles.t2}>{doctor?.speciality[0]?.specialization?.name}</Text>
                                     </View>
 
                                     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>4.5 </Text>
+                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'gray' }}>4.5 </Text>
                                         <Image
                                             source={images.star}
                                             resizeMode="cover"
@@ -81,21 +124,21 @@ const DoctorScreen = () => {
                                             width: 20
                                         }}
                                     />
-                                    <Text style={styles.t0}>Capetown</Text>
+                                    <Text style={styles.t0}>{doctorData?.city}</Text>
                                 </View>
                             </View>
                             <View style={styles.wr}>
                                 <Text style={styles.tq}>Doctor Description</Text>
                             </View>
                             <View style={styles.bitDoctorScreen}>
-                                <Text style={styles.greyText}>{doctorDescription}</Text>
+                                <Text style={styles.greyText}>{doctor?.speciality[0]?.specialization?.description}</Text>
                             </View>
                         </ScrollView>
                     </View>
                 </View>
             </ScrollView>
-           
-            <StatusBar backgroundColor="#161622" style="light" />
+
+            {/* <StatusBar backgroundColor="#161622" style="light" /> */}
         </SafeAreaView>
     );
 }
@@ -134,6 +177,7 @@ const styles = StyleSheet.create({
     },
     greyText: {
         color: 'grey',
+        fontSize:14
     },
     tq: {
         marginLeft: 15,
@@ -148,7 +192,8 @@ const styles = StyleSheet.create({
         width: (Dimensions.get('window').width),
     },
     t0: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: 'gray'
     },
     rectContainer: {
         flexDirection: 'row',

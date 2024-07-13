@@ -44,8 +44,11 @@ import Heart from "../assets/images/heart.png";
 import Plus from "../assets/images/plus.png";
 import Detail from "../assets/images/detail.png"
 import DSchedule from "../assets/images/DSchedule.png";
-import Camera from "../assets/images/camera.png"
-
-
-
-export default { Camera,Heart, open,Result,Plus,Detail,DSchedule, Treatment,Notification,Account, ArrowR,profile,Calenderg, Clock,thumbnail,PdfFile, docp,cards,Download, Arrow,Center,path,Patient, logo,Pills, logoSmall,Close, empty,onBoarding1,onBoarding2,onBoarding3,tickmark,calender,google,doctor, facebook,roleImage,doctorLogo,patientLogo,doctorCard,star,firstAid,person,location,profilePic,doctorPic,Check};
+import Camera from "../assets/images/camera.png";
+import BG from "../assets/images/bg.png";
+import Card from "../assets/images/card.png";
+import Menu from "../assets/images/menu.png";
+import Cart from "../assets/images/cart.png";
+import Bell from "../assets/images/bell.png";
+import Filter from "../assets/images/filter.png";
+export default { Menu,Cart,Bell,Filter, BG,Card,Camera,Heart, open,Result,Plus,Detail,DSchedule, Treatment,Notification,Account, ArrowR,profile,Calenderg, Clock,thumbnail,PdfFile, docp,cards,Download, Arrow,Center,path,Patient, logo,Pills, logoSmall,Close, empty,onBoarding1,onBoarding2,onBoarding3,tickmark,calender,google,doctor, facebook,roleImage,doctorLogo,patientLogo,doctorCard,star,firstAid,person,location,profilePic,doctorPic,Check};

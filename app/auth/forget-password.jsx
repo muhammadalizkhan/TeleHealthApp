@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions,TextInput, Alert, Image,StyleSheet,TouchableOpacity } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+// import { Ionicons } from '@expo/vector-icons';
 import { images } from "../../constants";
 
-import { AntDesign } from '@expo/vector-icons';
+// import { AntDesign } from '@expo/vector-icons';
 const ForgetPassword = () => {
  
     return (
@@ -46,7 +46,7 @@ const ForgetPassword = () => {
                 
                 />
     
-    <AntDesign name="mail" size={24} color="grey" />
+    {/* <AntDesign name="mail" size={24} color="grey" /> */}
               </View>
     
     

@@ -1,87 +1,89 @@
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { View, Text, StyleSheet, Dimensions,TouchableOpacity,Alert,Image } from "react-native";
+// import { StatusBar } from "expo-status-bar";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useStripe } from '@stripe/stripe-react-native';
-import {useCreatePaymentIntentMutation}  from '../../store/apislice';
+import { useCreatePaymentIntentMutation } from '../../store/apislice';
 import { images } from "../../constants";
 import { useRoute } from '@react-navigation/native';
 // import { Redirect, router } from "expo-router";
+import Icons from 'react-native-vector-icons/dist/Ionicons';
 
-const ConfirmAppointment = ({navigation}) => {
+const ConfirmAppointment = ({ navigation }) => {
     const route = useRoute();
 
     const [expanded, setExpanded] = useState(false);
     const [createPaymentIntent] = useCreatePaymentIntentMutation();
-    const { doctorName1, doctorImage } = route.params;
+    const { data} = route.params;
+    console.log('data ', data)
 
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
     const onCheckout = async () => {
         try {
-          // 1. Call the API to create a payment intent
-          // const response = await fetch('http://localhost:3000/payments/intents', {
-          //   method: 'POST',
-          //   headers: {
-          //     'Content-Type': 'application/json',
-          //   },
-          //   body: JSON.stringify({ amount: 17950 }),
-          // });
-          
-          // if (!response.ok) {
-          //   throw new Error('Failed to create payment intent');
-          // }
-          
-          // const data = await response.json();
-          
-          // 2. Initialize the Payment Sheet
-          const initResponse = await initPaymentSheet({
-            merchantDisplayName: 'TeleHealth',
-            paymentIntentClientSecret: "pi_3PN9FHJ56CLcyplb0uxrGPY0_secret_KfD5xyNKV9cLTcj1SGdEchyUW",
-          });
-          if (initResponse.error) {
-            console.log(initResponse.error);
-            Alert.alert('Something went wrong2');
-            return;
-          }
-      
-          // 3. Present the Payment Sheet from Stripe
-          const paymentResponse = await presentPaymentSheet();
+            // 1. Call the API to create a payment intent
+            // const response = await fetch('http://localhost:3000/payments/intents', {
+            //   method: 'POST',
+            //   headers: {
+            //     'Content-Type': 'application/json',
+            //   },
+            //   body: JSON.stringify({ amount: 17950 }),
+            // });
+
+            // if (!response.ok) {
+            //   throw new Error('Failed to create payment intent');
+            // }
+
+            // const data = await response.json();
+
+            // 2. Initialize the Payment Sheet
+            const initResponse = await initPaymentSheet({
+                merchantDisplayName: 'TeleHealth',
+                paymentIntentClientSecret: "pi_3PN9FHJ56CLcyplb0uxrGPY0_secret_KfD5xyNKV9cLTcj1SGdEchyUW",
+            });
+            if (initResponse.error) {
+                // console.log(initResponse.error);
+                Alert.alert('Something went wrong2');
+                return;
+            }
+
+            // 3. Present the Payment Sheet from Stripe
+            const paymentResponse = await presentPaymentSheet();
 
 
 
-      
-          if (paymentResponse.error) {
-            Alert.alert(
-              `Error code: ${paymentResponse.error.code}`,
-              paymentResponse.error.message
-            );
-            return;
-          }else{
-            Alert.alert(
-                "Payment Succeeded",
-                "Your payment was successful!",
-                [
-                    {
-                        text: "OK",
-                        onPress:   ()=>{navigation.navigate("parent-screen")}
-                            
+
+            if (paymentResponse.error) {
+                Alert.alert(
+                    `Error code: ${paymentResponse.error.code}`,
+                    paymentResponse.error.message
+                );
+                return;
+            } else {
+                Alert.alert(
+                    "Payment Succeeded",
+                    "Your payment was successful!",
+                    [
+                        {
+                            text: "OK",
+                            onPress: () => { navigation.navigate("parent-screen") }
+
                             // router.push('schedule/index1')
-                    }
-                ]
-            );
+                        }
+                    ]
+                );
 
 
-          }
-      
-          // 4. If payment ok -> create the order
-          // onCreateOrder();
+            }
+
+            // 4. If payment ok -> create the order
+            // onCreateOrder();
         } catch (error) {
-          console.error(error);
-          Alert.alert('Something went wrong');
+            console.error(error);
+            Alert.alert('Something went wrong');
         }
-      };
-      
+    };
+
 
     const toggleDescription = () => {
         setExpanded(!expanded);
@@ -94,73 +96,67 @@ const ConfirmAppointment = ({navigation}) => {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 {/* Main Content */}
-                <View style={styles.mainContent}>
-                    {/* Add your main content here */}
-
-                    <Text style={{ fontSize:25, fontWeight:"bold", marginRight:20, color:"white"}}>{"<"}</Text>
-
-                    <Text  style={{ fontSize:25, fontWeight:"bold", color:"white"}}>Aappointment</Text>
-                </View>
+              
 
                 {/* Inner Container */}
                 <View style={styles.innerContainer}>
                     {/* Previous Views */}
                     <View style={styles.rectContainer}>
-                    <View style={styles.rect}>      
-                                <Image
-                                                                 source={images.firstAid}
-                                                                 resizeMode="cover" 
-                                                                
-                                                                 style={{
-                                                 
-                                                                     height:20,
-                                                                     width:20
-                                                                     
-                                                 
-                                                                  
-                                                                 }}
-                                                 
-                                                 
-                                                               />
-                                <Text style={styles.t0}> 6 years exp</Text></View>
-                                <View style={styles.rect}>
-                                    
-                                <Image
-                                                                 source={images.person}
-                                                                 resizeMode="cover" 
-                                                                
-                                                                 style={{
-                                                 
-                                                                     height:20,
-                                                                     width:20
-                                                                     
-                                                 
-                                                                  
-                                                                 }}
-                                                 
-                                                 
-                                                               />
-                                    
-                                    <Text style={styles.t0}>100+ patients</Text></View>
-                                <View style={styles.rect}>
-                                    
-                                    
-                                <Image
-                                                                 source={images.location}
-                                                                 resizeMode="cover" 
-                                                                
-                                                                 style={{
-                                                 
-                                                                     height:20,
-                                                                     width:20
-                                                                     
-                                                 
-                                                                  
-                                                                 }}
-                                                 
-                                                 
-                                                               />
-                                    <Text style={styles.t0}>Capetown</Text></View>
+                        <View style={styles.rect}>
+                            <Image
+                                source={images.firstAid}
+                                resizeMode="cover"
+
+                                style={{
+
+                                    height: 20,
+                                    width: 20
+
+
+
+                                }}
+
+
+                            />
+                            <Text style={styles.t0}> 6 years exp</Text></View>
+                        <View style={styles.rect}>
+
+                            <Image
+                                source={images.person}
+                                resizeMode="cover"
+
+                                style={{
+
+                                    height: 20,
+                                    width: 20
+
+
+
+                                }}
+
+
+                            />
+
+                            <Text style={styles.t0}>100+ patients</Text></View>
+                        <View style={styles.rect}>
+
+
+                            <Image
+                                source={images.location}
+                                resizeMode="cover"
+
+                                style={{
+
+                                    height: 20,
+                                    width: 20
+
+
+
+                                }}
+
+
+                            />
+                            <Text style={styles.t0}>Capetown</Text></View>
                     </View>
 
                     {/* Spacer */}
@@ -169,21 +165,21 @@ const ConfirmAppointment = ({navigation}) => {
                     {/* Card */}
                     <View style={styles.card}>
 
-                        <View  style={styles.col1}>
+                        <View style={styles.col1}>
 
 
-                            <View  style={styles.img}>
-                            <Image
-                            source={{ uri: doctorImage }} // or use the uri prop for network images
-                            style={styles.imageStyle}
-                        />
+                            <View style={styles.img}>
+                                <Image
+                                    source={{uri :  data.profileImg}} // or use the uri prop for network images
+                                    style={styles.imageStyle}
+                                />
 
 
                             </View>
                             <View style={styles.col2}>
-    <Text style={[styles.text, { color: "white", fontSize: 20, fontWeight: "bold" }]}>{doctorName1}</Text>
-    <Text style={[styles.text, { color: "white", fontSize: 15 }]}>Cardiologist</Text>
-</View>
+                                <Text style={[styles.text, { color: "white", fontSize: 20, fontWeight: "bold" }]}>{data.firstName} {data.lastName}</Text>
+                                <Text style={[styles.text, { color: "white", fontSize: 15 }]}>{data.speciality[0].specialization.name}</Text>
+                            </View>
 
 
                         </View>
@@ -191,31 +187,31 @@ const ConfirmAppointment = ({navigation}) => {
 
                         <View style={styles.imageinnercol} >
 
-                            <View  style={styles.innerRow1}>
+                            <View style={styles.innerRow1}>
 
-                                <Text  style={{color:"white"}}>Duration:</Text>
+                                <Text style={{ color: "white" }}>Duration:</Text>
 
-                                <Text style={{color:"white"}}>40 min</Text>
+                                <Text style={{ color: "white" }}>40 min</Text>
 
                             </View>
 
-                            <View  style={styles.innerRow2}>
+                            <View style={styles.innerRow2}>
 
-                            <Text  style={{color:"white"}}>Type:</Text>
+                                <Text style={{ color: "white" }}>Type:</Text>
 
-<Text style={{color:"white"}}>Online</Text>
-                                
-                                </View>
+                                <Text style={{ color: "white" }}>Online</Text>
 
-
-                                <View style={styles.topBar}>
-
-<Text  style={styles.y1}>Fri,12 Apr</Text>
-
-<Text  style={styles.y1}>11:00 Am</Text>
+                            </View>
 
 
-</View>
+                            <View style={styles.topBar}>
+
+                                <Text style={styles.y1}>Fri,12 Apr</Text>
+
+                                <Text style={styles.y1}>11:00 Am</Text>
+
+
+                            </View>
 
 
                         </View>
@@ -242,30 +238,45 @@ const ConfirmAppointment = ({navigation}) => {
                     <View style={styles.spacer1}></View>
 
                     <View style={styles.rowWrap}>
-                        <Text style={styles.descriptionTitle}>Working Hours</Text>                        
-                       
+                        <Text style={styles.descriptionTitle}>Working Hours</Text>
+
                     </View>
                     <View style={styles.row1}>
 
-<Text style={{color:"grey"}}>Mon - Fri</Text>
+                        <Text style={{ color: "grey" }}>Mon - Fri</Text>
 
-<Text  style={{color:"grey"}}>8:00 Am to 4:00 Pm</Text>
+                        <Text style={{ color: "grey" }}>8:00 Am to 4:00 Pm</Text>
 
 
 
-</View>
+                    </View>
 
-<TouchableOpacity style={styles.buttonWrapper} onPress={onCheckout}>
-                <View style={styles.loginRealContainer}>
+                    <TouchableOpacity style={styles.buttonWrapper} onPress={onCheckout}>
+                        <View style={styles.loginRealContainer}>
 
-                   
-                    <Text style={styles.text4}>Confirm Appointment</Text>
+
+                            <Text style={styles.text4}>Confirm Appointment</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
-            </TouchableOpacity>
+                <View style={{
+                    position: 'absolute', width: '100%', height: 60,
+                    top: 0, paddingHorizontal: 15, paddingVertical: 8,
+                    flexDirection: 'row'
+                }}>
+                    <TouchableOpacity onPress={()=> navigation.goBack()}>
+                    <Icons name={'chevron-back'} size={30} color="black" />
+
+                    </TouchableOpacity>
+                    <Text style={{
+                        color: 'black', fontSize: 22, fontWeight: 'bold',
+                        marginLeft: 10
+                    }}>Appoinment</Text>
                 </View>
-              
+            
             </View>
-            <StatusBar backgroundColor="#161622" style="light" />
+            
+            {/* <StatusBar backgroundColor="#161622" style="light" /> */}
         </SafeAreaView>
     );
 }
@@ -285,71 +296,73 @@ const styles = StyleSheet.create({
         marginRight: 15,
         marginLeft: 15
     },
-    
 
-    innerRow1:{
+    t0:{
+      color:'black'
+    },
+    innerRow1: {
 
-         flexDirection:"row",
-         justifyContent:"space-between",
-         marginLeft:20,
-         marginRight:20,
-         marginBottom:10
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginLeft: 20,
+        marginRight: 20,
+        marginBottom: 10
 
     },
 
-    innerRow2:{
+    innerRow2: {
 
 
-        flexDirection:"row",
-        justifyContent:"space-between",
-        marginLeft:20,
-        marginRight:20
-
-
-    },
-
-
-    imageinnercol:{
-
-
-        flexDirection:"column"
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginLeft: 20,
+        marginRight: 20
 
 
     },
 
 
-    col2:{
+    imageinnercol: {
 
-        flexDirection:"column",
+
+        flexDirection: "column"
+
+
+    },
+
+
+    col2: {
+
+        flexDirection: "column",
 
 
     },
 
 
-    img:{
+    img: {
 
-        height:90,
-        width:90,
-        backgroundColor:"lightblue",
-        borderRadius:20,
-        marginRight:15
+        height: 90,
+        width: 90,
+        backgroundColor: "lightblue",
+        borderRadius: 20,
+        marginRight: 15
+
+    },
+
+
+    col1: {
+
+        flexDirection: "row",
+        padding: 20
+
+
+    },
+    y1: {
+        color: "white",
+        fontWeight: "bold"
 
     },
 
-
-    col1:{
-
-        flexDirection:"row",
-        padding:20
-
-
-    },
-    y1:{
-color:"white",
-fontWeight:"bold"
-
-    },
-    
     imageStyle: {
         width: '100%',
         height: '100%',
@@ -377,32 +390,32 @@ fontWeight:"bold"
         alignItems: 'center',
     },
 
-    
+
     // Styles here
 
 
-    row1:{
+    row1: {
 
-        flexDirection:"row",
-        marginLeft:10,
-        marginRight:10,
-        justifyContent:"space-between",
-        width: Dimensions.get("window").width-20,
+        flexDirection: "row",
+        marginLeft: 10,
+        marginRight: 10,
+        justifyContent: "space-between",
+        width: Dimensions.get("window").width - 20,
 
 
     },
 
-   rowWrap:{
+    rowWrap: {
 
-     display:"flex",
-     flexDirection:"row",
-     justifyContent:"flex-start",
-     alignItems:"center",
-     width: Dimensions.get("window").width,
-     marginLeft:15,
-    //  backgroundColor:"grey"
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: Dimensions.get("window").width,
+        marginLeft: 15,
+        //  backgroundColor:"grey"
 
-   },
+    },
 
     safeArea: {
         flex: 1,
@@ -412,13 +425,13 @@ fontWeight:"bold"
         flex: 1,
         alignItems: "center",
         justifyContent: "flex-end",
-        backgroundColor: "#ACCEFA",
+        backgroundColor: "white",
         position: "relative",
     },
     innerContainer: {
         backgroundColor: "white",
         width: "100%",
-        height: "87%",
+        height: "95%",
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         justifyContent: "flex-start",
@@ -437,8 +450,8 @@ fontWeight:"bold"
         paddingHorizontal: 15,
     },
     rect: {
-        width:110,
-        height: 30,
+        width: 120,
+        height: 40,
         borderColor: 'lightgrey',
         borderWidth: 1,
         borderRadius: 10,
@@ -446,7 +459,7 @@ fontWeight:"bold"
         marginLeft: 5,
         justifyContent: "center",
         alignItems: "center",
-        flexDirection:"row"
+        flexDirection: "row"
     },
     card: {
         width: Dimensions.get("window").width - 20,
@@ -462,9 +475,9 @@ fontWeight:"bold"
         height: "2%",
     },
     descriptionContainer: {
-       
-        width: Dimensions.get("window").width -20
-      
+
+        width: Dimensions.get("window").width - 20
+
     },
     descriptionTitle: {
         fontSize: 18,
@@ -479,12 +492,12 @@ fontWeight:"bold"
         color: "#1877F2",
         marginTop: 5,
     },
-    rowc:{
-        display:"flex",
-        flexDirection:"row",
-        justifyContent:"space-between",
-        paddingLeft:"10",
-        paddingRight:"10"
+    rowc: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingLeft: "10",
+        paddingRight: "10"
     }
 });
 

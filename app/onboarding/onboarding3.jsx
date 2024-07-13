@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+// import { StatusBar } from "expo-status-bar";
 import { View, Text, Image, ScrollView,StyleSheet,TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
@@ -27,10 +27,10 @@ const Onboarding3 = ({ navigation }) => {
           <View style={styles.innerContainer}>
             <Text style={styles.headerText}>Manage appointment</Text>
             <View style={styles.contentContainer}>
-              <Text>"Your pathway to wellness starts here. Connect with</Text>
-              <Text>compassionate health care professionals effortlessly,</Text>
-              <Text>"guiding you towards optimal health and vitality."</Text>
-              <View style={styles.spacer} />
+              {/* <Text style={{fontSize:16, color:'black'}}>"Your pathway to wellness starts here. Connect with</Text>
+              <Text style={{fontSize:16, color:'black'}}>compassionate health care professionals effortlessly,</Text>
+              <Text style={{fontSize:16, color:'black'}}>"guiding you towards optimal health and vitality."</Text>
+              <View style={styles.spacer} /> */}
               <View style={styles.footerContainer}>
               <View  style={styles.r5}>
             <View style={styles.cq1}></View>
@@ -42,7 +42,7 @@ const Onboarding3 = ({ navigation }) => {
 
            </View>
                 <TouchableOpacity  onPress={()=>navigation.navigate("role-login")}>
-                <Text style={styles.footerText}>Next &gt;</Text>
+                <Text style={styles.footerText}>Skip &gt;</Text>
                 </TouchableOpacity>
     
               </View>
@@ -54,7 +54,7 @@ const Onboarding3 = ({ navigation }) => {
              
           </ScrollView>
     
-          <StatusBar backgroundColor="#161622" style="light" />
+          {/* <StatusBar backgroundColor="#161622" style="light" /> */}
         </SafeAreaView>
       );
 }
@@ -72,13 +72,13 @@ const styles = StyleSheet.create({
 
 
   },
-
   cq:{
 
     height:10,
-    width:25,
+    width:35,
     backgroundColor:"#1877F2",
-    borderRadius:12
+    borderRadius:12,
+    marginRight:3
 
 
   },
@@ -86,13 +86,14 @@ const styles = StyleSheet.create({
   cq1:{
 
     height:10,
-    width:17,
-    backgroundColor:"grey",
-    borderRadius:12
-
+    width:20,
+    backgroundColor:"#f3f3f3",
+    borderRadius:12,
+    marginRight:3,
+   borderWidth:0.2,
+    borderColor:'gray'
 
   },
-
 
 
     images:{
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
       marginBottom: 30,
       marginLeft: 20,
+      color:'black'
     },
     contentContainer: {
       marginLeft: 20,
@@ -144,7 +146,9 @@ const styles = StyleSheet.create({
     },
     footerText: {
       fontWeight: 'bold',
-      fontSize: 15,
+      fontSize: 18,
+      marginRight:10,
+      color:'black'
     },
   });
   

@@ -30,12 +30,14 @@ import VideoCall from '../agora/video-call-screen';
 import Index1 from '../doctorSchedule/index1';
 import UpcomingSchedule from '../doctorSchedule/upcoming-schedule';
 import DParentScreen from '../doctorprofile/d-parent-screen';
+import Splash from '../auth';
 const Stack = createStackNavigator();
 
 function StackNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+       <Stack.Navigator initialRouteName="Splash">
+       <Stack.Screen name="Splash" component={Splash}  options={{ headerShown: false }}/>
         <Stack.Screen name="Home" component={Welcome}  options={{ headerShown: false }}/>
         <Stack.Screen name="onboarding2" component={Onboarding2}  options={{ headerShown: false }}/>
         <Stack.Screen name="onboarding3" component={Onboarding3}  options={{ headerShown: false }}/>
@@ -44,7 +46,7 @@ function StackNavigator() {
         <Stack.Screen name="reset-password" component={Resetpassword}  options={{ headerShown: false }}/>
         <Stack.Screen name="sign-up" component={SignUp}  options={{ headerShown: false }}/>
         <Stack.Screen name="verification-code" component={VerificationCode}  options={{ headerShown: false }}/> */}
-        {/* <Stack.Screen name="home-screen" component={HomeScreen}  options={{ headerShown: false }}/> */}
+        <Stack.Screen name="homescreen" component={HomeScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="doctor-profile" component={DoctorProfile}  options={{ headerShown: false }}/>
         <Stack.Screen name="schedule-appointment" component={ScheduleAappointmnet}  options={{ headerShown: false }}/>
         <Stack.Screen name="confirm-appointment" component={ConfirmAppointment}  options={{ headerShown: false }}/>
@@ -58,7 +60,7 @@ function StackNavigator() {
         <Stack.Screen name="patient-detail" component={PatientDetail}  options={{ headerShown: false }}/>
         <Stack.Screen name="patient-prescription" component={PatientPrescription}  options={{ headerShown: false }}/>
         <Stack.Screen name="patient-record-component" component={PatientRecordComponent}  options={{ headerShown: false }}/>
-        <Stack.Screen name="parent-screen" component={ParentScreen}  options={{ headerShown: false }}/>
+        <Stack.Screen name="parentscreen" component={ParentScreen}  options={{ headerShown: false }}/>
         <Stack.Screen name="video-call" component={VideoCall}  options={{ headerShown: false }}/>
         <Stack.Screen name="doctor-schedule" component={Index1}  options={{ headerShown: false }}/>
         <Stack.Screen name="UpcomingSchedule" component={UpcomingSchedule}  options={{ headerShown: false }} />
