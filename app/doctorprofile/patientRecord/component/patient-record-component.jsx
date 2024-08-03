@@ -4,7 +4,7 @@ import { images } from '../../../../constants';
 
 const PatientRecordComponent = () => {
   return (
-    <View style={styles.container}>
+    <View style={styles.inner}>
       <View>
         <Text style={styles.name}>John Wicket</Text>
         <Text style={styles.disease}>Disease: cardiovascular</Text>
@@ -29,7 +29,7 @@ export default PatientRecordComponent;
 
 const styles = StyleSheet.create({
   
-  container: {
+  inner: {
     height: 150,
     width: Dimensions.get('window').width - 40,
     backgroundColor: 'lightgrey',

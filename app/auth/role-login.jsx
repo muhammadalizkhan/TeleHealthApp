@@ -4,6 +4,7 @@ import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Alert } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dimensions } from 'react-native';
 import { images } from '../../constants';
+import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -31,7 +32,7 @@ const RoleLogin = ({navigation}) => {
                         <View style={styles.contentContainer}>
                             {/* <Text style={{fontSize:16, color:'black',marginLeft:10, width:'90%'}}>Choose your role: Login as doctor to heal or as a patient to be healed</Text> */}
 
-                            <View style={{ marginTop: 20 }}></View>
+                            <View style={{ marginTop: 20 * heightRef }}></View>
 
                             <View style={styles.innerrow}>
                                 <TouchableOpacity
@@ -42,7 +43,7 @@ const RoleLogin = ({navigation}) => {
                                     onPress={() => setSelectedRole('doctor')}>
 
                                         <Image source={images.doctorLogo}  style={styles.dlogo}></Image>
-                                        
+
                                     <Text style={ selectedRole === 'doctor' ? [styles.center, {color:'white'}]: styles.center}>As Doctor</Text>
                                 </TouchableOpacity>
 
@@ -80,32 +81,32 @@ const styles = StyleSheet.create({
 
     dlogo:{
 
-        height:40,
-        width:40
+        height:40 * heightRef,
+        width:40 * heightRef
 
 
     },
 
   smallCircle:{
 
-    height:10,
-    width:10,
+    height:10 * heightRef ,
+    width:10 * widthRef,
     color:"blue",
-    borderRadius: 30, 
+    borderRadius: 30,
 
 
   },
 
     center: {
-       marginLeft:20,
+       marginLeft:10 * widthRef,
        alignSelf:'center',
        color:'#858585',
-       fontSize:16
+       fontSize:16 * fontRef
     },
 
     mainContainer: {
-        height: 55,
-        width: 175,
+        height: 60 * heightRef,
+        width: 155 * widthRef,
         borderWidth: 1, // Border width
         borderColor: 'grey', // Border color
         borderRadius: 30, // Border radius
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignContent: 'center',
         padding: 5,
-        paddingLeft:14
+        paddingLeft:14 * widthRef
     },
 
     selectedRole: {
@@ -122,17 +123,18 @@ const styles = StyleSheet.create({
     },
 
     innerrow: {
-        marginLeft: 5,
+        marginLeft: 5 * widthRef,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginRight: 12,
+        marginRight: 12 * widthRef,
     },
 
     images: {
         width: '100%',
         position:'absolute',
-        top:30
+        top:80 * heightRef,
+        height:420 * heightRef
     },
 
     container: {
@@ -148,16 +150,16 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
     },
     headerText: {
-        marginTop: 50,
+        marginTop: 40 * heightRef,
         fontWeight: 'bold',
-        fontSize: 30,
+        fontSize: 30 * fontRef,
         justifyContent: 'flex-start',
-        marginBottom: 10,
-        marginLeft: 20,
+        marginBottom: 10 * widthRef,
+        marginLeft: 20 * widthRef,
         color:'black'
     },
     contentContainer: {
-        marginLeft: 10,
+        marginLeft: 10 * widthRef,
     },
     footerContainer: {
         display: 'flex',
@@ -170,8 +172,8 @@ const styles = StyleSheet.create({
     },
     footerText: {
         fontWeight: 'bold',
-        fontSize: 18,
-        marginRight:20,
+        fontSize: 18 * fontRef,
+        marginRight:20 * widthRef,
         color:'black'
       },
 });

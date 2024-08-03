@@ -81,7 +81,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        manifestPlaceholders = [auth0Domain: "dev-4to8zs7d2r2lhajj.us.auth0.com", auth0Scheme: "com.telehealthapp"]
+        manifestPlaceholders = [auth0Domain: "dev-4to8zs7d2r2lhajj.us.auth0.com", auth0Scheme: "com.telehealthapp.auth0"]
     }
     signingConfigs {
         release {

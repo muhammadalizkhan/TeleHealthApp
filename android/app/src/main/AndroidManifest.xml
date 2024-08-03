@@ -28,7 +28,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Replace "com.telehealthapp" with your actual app scheme -->
-                <data android:scheme="com.telehealthapp" android:host="dev-4to8zs7d2r2lhajj.us.auth0.com" android:pathPrefix="/android/com.telehealthapp/callback" />
+                <data android:scheme="http" android:host="dev-4to8zs7d2r2lhajj.us.auth0.com" />
+                <data android:scheme="https" android:host="dev-4to8zs7d2r2lhajj.us.auth0.com"/>   
+                <data android:scheme="com.telehealthapp.auth0"
+                 android:host="dev-4to8zs7d2r2lhajj.us.auth0.com" 
+                 android:path="/android/com.telehealthapp/callback" />
             </intent-filter>
         </activity>
     </application>

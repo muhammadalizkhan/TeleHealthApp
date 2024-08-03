@@ -1,290 +1,170 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Dimensions } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TouchableOpacity } from 'react-native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import { images } from '../../../constants';
-import PatientRecordComponent from './component/patient-record-component';
 import PdfResult from '../../prescription/component/pdf-result';
+import Icons from 'react-native-vector-icons/dist/Ionicons';
+import {fontRef, heightRef, widthRef} from "../../../constants/screenSize";
 
 const PatientDetail = () => {
+  const route = useRoute();
+  const { user, condition } = route.params;
+  const navigation = useNavigation();
   return (
-    <View>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.appBar}>
-          <View style={styles.appBarpatr1}>
-            <Text style={styles.h1}>John Wick</Text>
-          </View>
-       
+    <SafeAreaView style={styles.container}>
+
+      <View style={styles.appBar}>
+        <View style={styles.appBarpatr1}>
+          <TouchableOpacity onPress={() => navigation.goBack()} >
+            <Icons name={'chevron-back'} size={30} color="black" />
+
+          </TouchableOpacity>
+          <Text style={styles.h1}>{`${user?.firstName || ''} ${user?.lastName || ''}`}</Text>
         </View>
-        <View style={styles.spacer} />
-        <Text style={{color:"#1877F2", fontWeight:"bold", fontSize:18,marginBottom:10}}>Basic Info</Text>
-
-        <View  style={styles.r1}
-        
-        >
-
-          <Text style={{fontWeight:"bold"}}>Disease :</Text>
-          <Text style={{fontWeight:"bold"}}>Hypertention</Text>
-        </View>
-        <View  style={styles.r1}
-        
-        >
-
-          <Text style={{fontWeight:"bold"}}>Sub Category :</Text>
-          <Text style={{fontWeight:"bold"}}>Blood Presure </Text>
-        </View>
-        <View  style={styles.r1}
-        
-        >
-
-          <Text style={{fontWeight:"bold"}}>Blood Group :</Text>
-          <Text style={{fontWeight:"bold"}}>AB+</Text>
-        </View>
-        <View  style={styles.r1}
-        
-        >
-
-          <Text style={{fontWeight:"bold"}}>Dietry :</Text>
-          <Text style={{fontWeight:"bold"}}>Non Veg</Text>
-        </View>
-
-        <View  style={styles.r1}
-        
-        >
-
-          <Text style={{fontWeight:"bold"}}>Height :</Text>
-          <Text style={{fontWeight:"bold"}}>5'7</Text>
-        </View>
-
-        <View  style={styles.r1}
-        
-        >
-
-          <Text style={{fontWeight:"bold"}}>Age :</Text>
-          <Text style={{fontWeight:"bold"}}>30</Text>
-        </View>
-
-
-        <Text style={{color:"#1877F2", fontWeight:"bold", fontSize:18,marginBottom:10, marginTop:10}}>Lab Results</Text>
-
-        <PdfResult/>
-        <PdfResult/>
-
-        <Text style={{color:"#1877F2", fontWeight:"bold", fontSize:18,marginBottom:10, marginTop:10}}>Previous Appointment</Text>
-
-        
-        <View style={styles.topBar}>
-
-          <View style={{flexDirection:"row", alignItems:"center"}}>
-
-        <Image
-                                                                 source={images.Calenderg}
-                                                                 resizeMode="cover" 
-                                                                
-                                                                 style={{
-                                                 
-                                                                     height:25,
-                                                                     width:25
-                                                                     
-                                                 
-                                                                  
-                                                                 }}
-                                                 
-                                                 
-                                                               />
-
-<Text  style={styles.y1}> Fri,12 Apr</Text>
-</View>
-
-<View  style={{flexDirection:'row', justifyContent:"center",alignItems:"centerv"}}>
-
-<Image
-                                                                 source={images.Clock}
-                                                                 resizeMode="cover" 
-                                                                
-                                                                 style={{
-                                                 
-                                                                     height:25,
-                                                                     width:25
-                                                                     
-                                                 
-                                                                  
-                                                                 }}
-                                                 
-                                                 
-                                                               />
-
-<Text  style={styles.y1}> 11:00 am</Text>
-
-</View>
-
-
-</View>
-
-        <Text style={{color:"#1877F2", fontWeight:"bold", fontSize:18,marginBottom:10, marginTop:10}}>Send Prescription</Text>
-
-        <View style={styles.c1}>
-
-        <Image
-                                                                 source={images.docp}
-                                                                 resizeMode="cover" 
-                                                                
-                                                                 style={{
-                                                 
-                                                                     height:80,
-                                                                     width:80
-                                                                     
-                                                 
-                                                                  
-                                                                 }}
-                                                 
-                                                 
-                                                               />
-
-
-          <View style={{justifyContent:"center"}}>
-
-
-          <Text   style={{color:"grey"}} >Enter the Prescription</Text>
-          
-          </View>
-
-
- <View  style={{justifyContent:"center"}}>
-
+        <View style={styles.circularBox}>
           <Image
-                                                                 source={images.ArrowR}
-                                                                 resizeMode="cover" 
-                                                                
-                                                                 style={{
-                                                 
-                                                                     height:40,
-                                                                     width:40
-                                                                     
-                                                 
-                                                                  
-                                                                 }}
-                                                 
-                                                 
-                                                               />
-
-</View>
-
-
-
-
-
+            source={{ uri: user?.profileImg }}
+            resizeMode="contain"
+            style={{ height: 50 * heightRef,  width: 50 * heightRef,  }}
+          />
         </View>
+      </View>
+
+      <View style={{padding:20 * heightRef}}>
 
 
-        
-     
-      </SafeAreaView>
-    </View>
+      <View style={styles.spacer} />
+      <Text style={{ color: "#1877F2", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef }}>Basic Info</Text>
+
+      <View style={styles.r1}>
+        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey' }}>Disease :</Text>
+        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey' }}>{condition}</Text>
+      </View>
+      <View style={styles.r1}>
+        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>Blood Group :</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>AB+</Text>
+      </View>
+      <View style={styles.r1}>
+        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Dietry :</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Non Veg</Text>
+      </View>
+      <View style={styles.r1}>
+        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>Height :</Text>
+        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>5'7</Text>
+      </View>
+      <View style={styles.r1}>
+        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Age :</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>30</Text>
+      </View>
+
+      <Text style={{  color: "#1877F2", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef , marginTop:10 * heightRef }}>Lab Results</Text>
+      <PdfResult />
+      <PdfResult />
+
+      {/* <Text style={{color:"#1877F2", fontWeight:"bold", fontSize:18,marginBottom:10, marginTop:10}}>Previous Appointment</Text>
+      <View style={styles.topBar}>
+        <View style={{flexDirection:"row", alignItems:"center"}}>
+          <Image
+            source={images.Calenderg}
+            resizeMode="cover"
+            style={{ height:25, width:25 }}
+          />
+          <Text style={styles.y1}> Fri,12 Apr</Text>
+        </View>
+        <View style={{flexDirection:'row', justifyContent:"center", alignItems:"center"}}>
+          <Image
+            source={images.Clock}
+            resizeMode="cover"
+            style={{ height:25, width:25 }}
+          />
+          <Text style={styles.y1}> 11:00 am</Text>
+        </View>
+      </View> */}
+
+      {/*<Text style={{  color: "#1877F2", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef , marginTop: 10  * heightRef}}>Send Prescription</Text>*/}
+      {/*<View style={styles.c1}>*/}
+      {/*  <Image*/}
+      {/*    source={images.docp}*/}
+      {/*    resizeMode="cover"*/}
+      {/*    style={{ height: 80, width: 80 }}*/}
+      {/*  />*/}
+      {/*  <View style={{ justifyContent: "center" }}>*/}
+      {/*    <Text style={{ color: "grey" }}>Enter the Prescription</Text>*/}
+      {/*  </View>*/}
+      {/*  <View style={{ justifyContent: "center" }}>*/}
+      {/*    <Image*/}
+      {/*      source={images.ArrowR}*/}
+      {/*      resizeMode="cover"*/}
+      {/*      style={{ height: 40, width: 40 }}*/}
+      {/*    />*/}
+      {/*  </View>*/}
+      {/*</View>*/}
+      </View>
+    </SafeAreaView>
   )
 }
 
 export default PatientDetail
 
 const styles = StyleSheet.create({
-
-  y1:{
-
-color:"white",
-fontWeight:"bold"
+  y1: {
+    color: "white",
+    fontWeight: "bold"
   },
-
-
-  c1:{
-
-    height:90,
-    borderWidth:1,
-    borderColor:"grey",
-    borderRadius:15,
-    width: Dimensions.get("window").width - 40,
-    // width:200
-
-    // justifyContent:"center",
-    justifyContent:"space-around",
-    alignContent:"center",
-    flexDirection:"row"
-
-
-  },
-
-  topBar: {
-    backgroundColor: "grey", // Adding transparency
-    height: 45,
+  c1: {
+    height: 90 * heightRef,
+    borderWidth: 1,
+    borderColor: "grey",
     borderRadius: 15,
+    width: Dimensions.get("window").width - 40,
+    justifyContent: "space-around",
+    alignContent: "center",
+    flexDirection: "row"
+  },
+  topBar: {
+    backgroundColor: "grey",
+    height: 45 * heightRef,
+    borderRadius: 15 ,
     flexDirection: "row",
-    padding: 10,
+    padding: 10 * heightRef,
     alignItems: "center",
     justifyContent: "space-between",
-
-
     marginRight: 7,
     marginLeft: 7
-},
-
-  r1:{
-
-    flexDirection:"row",
-    justifyContent:"space-between"
-
-
   },
-
-  tabbar: {
+  r1: {
     flexDirection: "row",
-    backgroundColor: "#fff",
-    elevation: 2, // for shadow on Android
-    shadowColor: "#000", // for shadow on iOS
-    shadowOpacity: 0.2, // for shadow on iOS
-    shadowRadius: 1, // for shadow on iOS
-    shadowOffset: { width: 0, height: 1 }, // for shadow on iOS
-    borderRadius: 20, // for rounded corners
-    overflow: "hidden", // to ensure rounded corners are applied
-  },
-  tab: {
-    flex: 1,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  activeTab: {
-    backgroundColor: "#1877F2", // blue color when selected
-  },
-  tabText: {
-    color: "black", // lightblue by default
-    fontSize: 16,
-  },
-  activeTabText: {
-    color: "#fff", // white color when selected
+    justifyContent: "space-between"
   },
   spacer: {
-    height: 10,
+    height: 10 * heightRef,
   },
   h1: {
     fontWeight: "bold",
-    fontSize: 22,
+    fontSize: 22 * fontRef,
+    color:'black',
+    marginLeft:10 * widthRef
   },
   appBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    padding:10 * heightRef
   },
   appBarpatr1: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  container: {
+
+    justifyContent: "flex-start",
+  },
   circularBox: {
-    width: 50,
-    height: 50,
+    width: 50 * heightRef,
+    height: 50 * heightRef,
+    overflow:'hidden',
     backgroundColor: 'blue',
     borderRadius: 50,
-  },
-  container: {
-    marginTop: 14,
-    padding: 20,
-    justifyContent: "flex-start",
   },
 });

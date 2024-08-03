@@ -7,23 +7,23 @@ const PdfResult = () => {
     <View style={styles.containre}>
   <Image
                                                                  source={images.PdfFile}
-                                                                 resizeMode="cover" 
-                                                                
+                                                                 resizeMode="cover"
+
                                                                  style={{
-                                                 
+
                                                                      height:100,
                                                                      width:100
-                                                                     
-                                                 
-                                                                  
+
+
+
                                                                  }}
-                                                 
-                                                 
+
+
                                                 />
 
                                             <View style={styles.c1}>
         <View style={styles.r1}>
-        <Text style={{fontSize:13, fontWeight:"bold", marginTop:10}}>PDF-2SD4443344-S3343422</Text>
+        <Text style={{fontSize:13, fontWeight:"bold", marginTop:10, color:'dimgray'}}>PDF-2SD4443344-S3343422</Text>
 
         </View>
 
@@ -32,7 +32,7 @@ const PdfResult = () => {
         </View>
         </View>
 
-    
+
     </View>
   )
 }
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 
     r1:{
 
-      flexDirection:"row"  
+      flexDirection:"row"
     },
 
     c1:{
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 
 
     },
-    
+
     lowcontain:{
 
         justifyContent:"flex-end",
@@ -72,6 +72,6 @@ const styles = StyleSheet.create({
     borderColor: 'grey', // border color
     marginTop:10,
     flexDirection:"row"
-   
+
   }
 })

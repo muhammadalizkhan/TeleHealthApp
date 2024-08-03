@@ -6,6 +6,7 @@ import { Icons, images } from "../../constants";
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import Iconss from 'react-native-vector-icons/dist/Ionicons';
+import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
 
 const DoctorProfile = () => {
     const navigation = useNavigation();
@@ -29,7 +30,7 @@ const DoctorProfile = () => {
 
 
 
-                    <View style={{ height: 300, width: 300, justifyContent: "center", alignItems: "center" }}>
+                    <View style={{ height: 300 * heightRef, width: 300 * widthRef, justifyContent: "center", alignItems: "center" }}>
 
 
                         <Image
@@ -38,9 +39,9 @@ const DoctorProfile = () => {
 
                             style={{
 
-                                height: 250,
-                                width: 250,
-                                marginTop:50
+                                height: 250 * heightRef,
+                                width: 250 * heightRef,
+                                marginTop:50 * heightRef,
 
 
                             }}
@@ -63,7 +64,7 @@ const DoctorProfile = () => {
 
                                     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
 
-                                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>4.5 </Text>
+                                        <Text style={{ fontSize: 25 * fontRef, fontWeight: 'bold', color:'grey' }}>4.5 </Text>
 
                                         <Image
                                             source={images.star}
@@ -101,8 +102,8 @@ const DoctorProfile = () => {
 
                                         style={{
 
-                                            height: 20,
-                                            width: 20
+                                            height: 20 * heightRef,
+                                            width: 20 * heightRef
 
 
 
@@ -119,8 +120,8 @@ const DoctorProfile = () => {
 
                                         style={{
 
-                                            height: 20,
-                                            width: 20
+                                            height: 20 * heightRef,
+                                            width: 20 * heightRef
 
 
 
@@ -139,8 +140,8 @@ const DoctorProfile = () => {
 
                                         style={{
 
-                                            height: 20,
-                                            width: 20,
+                                            height: 20 * heightRef,
+                                            width: 20 * heightRef,
                                             marginRight:8
 
 
@@ -156,7 +157,7 @@ const DoctorProfile = () => {
                             </View>
                             <View style={styles.bitDescription}>
                                 <Text style={styles.greyText}>
-                                    {expanded ? data.about : `${data.about.substring(0, 200)}...`}
+                                    {expanded ? data.about : `${data.about.substring(0, 170)}...`}
                                     {' '}
                                     <Text style={styles.readMore} onPress={toggleDescription}>
                                         {expanded ? 'Read Less' : 'Read More'}
@@ -165,11 +166,11 @@ const DoctorProfile = () => {
                             </View>
                         </ScrollView>
                     </View>
-                 <TouchableOpacity style={{position:'absolute', top:14, left:14,
-                    width:40, height:40, backgroundColor:'white', borderRadius:10,
+                 <TouchableOpacity style={{position:'absolute', top:14 * heightRef, left:14 * widthRef,
+                    width:40 * widthRef, height:40 * heightRef, backgroundColor:'white', borderRadius:10,
                     justifyContent:'center', alignItems:'center'
                  }} onPress={()=> navigation.goBack()}>
-                 <Iconss name={'chevron-back-outline'} size={30} />
+                 <Iconss name={'chevron-back-outline'} size={30} color={'black'} />
                  </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -204,39 +205,40 @@ const styles = StyleSheet.create({
     },
 
     buttonWrapper: {
-        marginTop: 10,
-        bottom: 0,
+        marginTop: 0 * heightRef,
+        bottom: -10,
         width: '100%',
         alignItems: 'center',
     },
     text4: {
         color: "white",
         fontWeight: "bold",
-        fontSize:20
+        fontSize:18 * fontRef
     },
     loginRealContainer: {
         backgroundColor: "#1877F2",
-        height: 60,
+        height: 60 * heightRef,
         width: Dimensions.get("window").width - 40,
         borderRadius: 40,
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 20
+        marginBottom: 20 * heightRef,
     },
     sc: {},
     bitDescription: {
-        marginHorizontal: 15,
-        marginTop: 5,
+        marginHorizontal: 15 * widthRef,
+        marginTop: 5 * heightRef,
     },
     greyText: {
         color: 'grey',
+        fontSize: 14 * fontRef,
     },
     tq: {
-        marginLeft: 15,
+        marginLeft: 15 * widthRef,
         fontWeight: "bold",
-        fontSize: 24,
+        fontSize: 24 * fontRef,
         color: "#1877F2",
-        margin: 14
+        margin: 14 * heightRef,
     },
     wr: {
         justifyContent: "center",
@@ -244,46 +246,49 @@ const styles = StyleSheet.create({
         width: (Dimensions.get('window').width),
     },
     t0: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color:"black",
+        fontSize: 12 * fontRef
     },
     rectContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 20,
-        paddingHorizontal: 5,
+        marginTop: 20 * heightRef,
+        paddingHorizontal: 5 * widthRef,
     },
     rect: {
-        width: 110,
-        height: 50,
+        width: 110 * widthRef,
+        height: 50 * heightRef,
         borderColor: 'lightgrey',
         borderWidth: 1,
         borderRadius: 20,
-        marginRight: 5,
-        marginLeft: 5,
+        marginRight: 5 * widthRef,
+        marginLeft: 5 * widthRef,
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row"
     },
     t1: {
-        fontSize: 22,
+        fontSize: 22 * fontRef,
         color: "#1877F2",
         fontWeight: "bold"
     },
     t2: {
-        color: "grey"
+        color: "grey",
+        fontSize: 16 * fontRef
     },
     cont: {
         justifyContent: "center",
         alignItems: "flex-start"
     },
     oval: {
-        height: 90,
+        height: 90 * heightRef,
         width: Dimensions.get('window').width - 30,
         backgroundColor: "whitesmoke",
-        marginTop: 15,
+        marginTop: 15 * heightRef,
         borderRadius: 20,
-        padding: 20,
-        marginLeft: 15
+        padding: 20 * widthRef,
+        marginLeft: 15 * widthRef,
     },
     images: {
         display: "flex",
@@ -308,18 +313,18 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     headerText: {
-        marginTop: 60,
+        marginTop: 60 * heightRef,
         fontWeight: 'bold',
-        fontSize: 30,
+        fontSize: 30 * fontRef,
         justifyContent: 'flex-start',
-        marginBottom: 30,
-        marginLeft: 20,
+        marginBottom: 30 * heightRef,
+        marginLeft: 20 * widthRef,
     },
     contentContainer: {
-        marginLeft: 20,
+        marginLeft: 20 * widthRef,
     },
     footerContainer: {
-        marginRight: 20,
+        marginRight: 20 * widthRef,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -330,10 +335,11 @@ const styles = StyleSheet.create({
     },
     footerText: {
         fontWeight: 'bold',
-        fontSize: 15,
+        fontSize: 15 * fontRef,
     },
     readMore: {
         color: 'blue',
+        fontSize: 14 * fontRef,
         // textDecorationLine: 'underline',
     },
 });
