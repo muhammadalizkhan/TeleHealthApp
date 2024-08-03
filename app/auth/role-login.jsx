@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+// import { StatusBar } from 'expo-status-bar';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dimensions } from 'react-native';
 import { images } from '../../constants';
+import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -29,9 +30,9 @@ const RoleLogin = ({navigation}) => {
                     <View style={styles.innerContainer}>
                         <Text style={styles.headerText}>Login</Text>
                         <View style={styles.contentContainer}>
-                            <Text>Choose your role: Login as doctor to heal or as a patient to be healed</Text>
+                            {/* <Text style={{fontSize:16, color:'black',marginLeft:10, width:'90%'}}>Choose your role: Login as doctor to heal or as a patient to be healed</Text> */}
 
-                            <View style={{ marginTop: 20 }}></View>
+                            <View style={{ marginTop: 20 * heightRef }}></View>
 
                             <View style={styles.innerrow}>
                                 <TouchableOpacity
@@ -42,8 +43,8 @@ const RoleLogin = ({navigation}) => {
                                     onPress={() => setSelectedRole('doctor')}>
 
                                         <Image source={images.doctorLogo}  style={styles.dlogo}></Image>
-                                        
-                                    <Text style={styles.center}>As Doctor</Text>
+
+                                    <Text style={ selectedRole === 'doctor' ? [styles.center, {color:'white'}]: styles.center}>As Doctor</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -53,7 +54,7 @@ const RoleLogin = ({navigation}) => {
                                     ]}
                                     onPress={() => setSelectedRole('patient')}>
                                            <Image source={images.patientLogo}  style={styles.dlogo}></Image>
-                                    <Text style={styles.center}>As Patient</Text>
+                                    <Text style={ selectedRole === 'patient' ? [styles.center, {color:'white'}]: styles.center}>As Patient</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -69,7 +70,7 @@ const RoleLogin = ({navigation}) => {
                     </View>
                 </View>
             </ScrollView>
-            <StatusBar backgroundColor="#161622" style="light" />
+            {/* <StatusBar backgroundColor="#161622" style="light" /> */}
         </SafeAreaView>
     );
 };
@@ -80,36 +81,40 @@ const styles = StyleSheet.create({
 
     dlogo:{
 
-        height:30,
-        width:30
+        height:40 * heightRef,
+        width:40 * heightRef
 
 
     },
 
   smallCircle:{
 
-    height:10,
-    width:10,
+    height:10 * heightRef ,
+    width:10 * widthRef,
     color:"blue",
-    borderRadius: 30, 
+    borderRadius: 30,
 
 
   },
 
     center: {
-       
+       marginLeft:10 * widthRef,
+       alignSelf:'center',
+       color:'#858585',
+       fontSize:16 * fontRef
     },
 
     mainContainer: {
-        height: 45,
-        width: 130,
+        height: 60 * heightRef,
+        width: 155 * widthRef,
         borderWidth: 1, // Border width
         borderColor: 'grey', // Border color
         borderRadius: 30, // Border radius
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'flex-start',
         alignContent: 'center',
-        padding: 10,
+        padding: 5,
+        paddingLeft:14 * widthRef
     },
 
     selectedRole: {
@@ -118,26 +123,22 @@ const styles = StyleSheet.create({
     },
 
     innerrow: {
-        marginLeft: 5,
+        marginLeft: 5 * widthRef,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginRight: 12,
+        marginRight: 12 * widthRef,
     },
 
     images: {
-        display: 'flex',
-        justifyContent: 'flex-end',
-        flex: 1,
-        width: screenWidth,
-        marginTop: '30%',
-        width:310,
-        marginBottom:0
+        width: '100%',
+        position:'absolute',
+        top:80 * heightRef,
+        height:420 * heightRef
     },
 
     container: {
         flex: 1,
-        alignItems: 'center',
         justifyContent: 'flex-end',
         backgroundColor: '#ACCEFA',
     },
@@ -149,15 +150,16 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
     },
     headerText: {
-        marginTop: 20,
+        marginTop: 40 * heightRef,
         fontWeight: 'bold',
-        fontSize: 30,
+        fontSize: 30 * fontRef,
         justifyContent: 'flex-start',
-        marginBottom: 30,
-        marginLeft: 20,
+        marginBottom: 10 * widthRef,
+        marginLeft: 20 * widthRef,
+        color:'black'
     },
     contentContainer: {
-        marginLeft: 20,
+        marginLeft: 10 * widthRef,
     },
     footerContainer: {
         display: 'flex',
@@ -166,11 +168,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     spacer: {
-        height: '25%',
+        height: '20%',
     },
     footerText: {
         fontWeight: 'bold',
-        fontSize: 15,
-        marginRight: 15,
-    },
+        fontSize: 18 * fontRef,
+        marginRight:20 * widthRef,
+        color:'black'
+      },
 });

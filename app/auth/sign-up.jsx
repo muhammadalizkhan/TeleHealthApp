@@ -3,7 +3,7 @@ import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text,StyleSheet ,ScrollView, Dimensions,TextInput, Alert, Image,TouchableOpacity } from "react-native";
 import { Switch } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+// import { AntDesign } from '@expo/vector-icons';
 import { images } from "../../constants";
 
 const SignUp = () => {
@@ -87,7 +87,7 @@ const SignUp = () => {
               onChangeText={(text) => handleInputChange('email', text)}
               value={form.email}
             />
-<AntDesign name="mail" size={24} color="grey" />
+{/* <AntDesign name="mail" size={24} color="grey" /> */}
           </View>
 
 

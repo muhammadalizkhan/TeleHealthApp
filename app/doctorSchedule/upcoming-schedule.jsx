@@ -4,7 +4,7 @@ import React from 'react';
 
 const UpcomingSchedule = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.upcom}>
       <View style={styles.topBar}>
         <Text style={styles.y1}>Fri, 12 Apr</Text>
         <Text style={styles.y1}>11:00 am</Text>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-  container: {
+  upcom: {
     height: 180,
     width: Dimensions.get('window').width - 40,
     backgroundColor: '#1877F2',

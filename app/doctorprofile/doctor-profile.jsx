@@ -1,28 +1,72 @@
-import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
+// import { StatusBar } from "expo-status-bar";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDoctorbyId } from "../../constants/APi";
+import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
 
 const DoctorScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const name = "Dr James";
-    const doctorDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitae";
+    const [doctorData, setDoctorData] = useState(null);
+    const [doctor, setDoctor] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const getDoctorData = async () => {
+            try {
+                const response = await AsyncStorage.getItem('DoctorData');
+                if (response !== null) {
+                    const parsedResponse = JSON.parse(response);
+                    setDoctorData(parsedResponse?.user);
+                }
+            } catch (error) {
+                console.log('Error retrieving login response:', error);
+            }
+        };
+
+        getDoctorData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (doctorData) {
+                try {
+                    // Fetch data from API
+                    const doctorsData = await getDoctorbyId(doctorData?._id);
+                    setDoctor(doctorsData);
+                } catch (error) {
+                    console.error('Error fetching doctors:', error);
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [doctorData]);
+
+    console.log('doctor ====> ', doctor)
+    // const name = "Dr James";
+    // const doctorDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitae";
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={styles.container}>
-                    <View style={{ height: 300, width: 300, justifyContent: "center", alignItems: "center" }}>
+                    <View style={{ height: 310 * heightRef, width: 280 * widthRef, justifyContent: "center", alignItems: "center" }}>
                         <Image
-                            source={images.doctor}
+                            source={{ uri: doctor?.profileImg }}
                             resizeMode="cover"
                             style={{
-                                height: 300,
-                                width: 300
+                                height: 280 * heightRef ,
+                                width: 280 * heightRef
                             }}
                         />
                     </View>
@@ -32,18 +76,18 @@ const DoctorScreen = () => {
                             <View style={styles.oval}>
                                 <View style={styles.rowspace}>
                                     <View style={styles.cont}>
-                                        <Text style={styles.t1}>{name}</Text>
-                                        <Text style={styles.t2}>Cardiologist</Text>
+                                        <Text style={styles.t1}>{doctor?.firstName} {doctor?.lastName}</Text>
+                                        <Text style={styles.t2}>{doctor?.speciality[0]?.specialization?.name}</Text>
                                     </View>
 
                                     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>4.5 </Text>
+                                        <Text style={{ fontSize: 25 * fontRef, fontWeight: 'bold', color: 'gray' }}>4.5 </Text>
                                         <Image
                                             source={images.star}
                                             resizeMode="cover"
                                             style={{
-                                                height: 15,
-                                                width: 15
+                                                height: 15 * heightRef,
+                                                width: 15 * heightRef
                                             }}
                                         />
                                     </View>
@@ -55,8 +99,8 @@ const DoctorScreen = () => {
                                         source={images.firstAid}
                                         resizeMode="cover"
                                         style={{
-                                            height: 20,
-                                            width: 20
+                                            height: 20 * heightRef,
+                                            width: 20 * heightRef
                                         }}
                                     />
                                     <Text style={styles.t0}> 6 years exp</Text>
@@ -66,8 +110,8 @@ const DoctorScreen = () => {
                                         source={images.person}
                                         resizeMode="cover"
                                         style={{
-                                            height: 20,
-                                            width: 20
+                                            height: 20 * heightRef,
+                                            width: 20 * heightRef
                                         }}
                                     />
                                     <Text style={styles.t0}>100+ patients</Text>
@@ -77,25 +121,25 @@ const DoctorScreen = () => {
                                         source={images.location}
                                         resizeMode="cover"
                                         style={{
-                                            height: 20,
-                                            width: 20
+                                            height: 20 * heightRef,
+                                            width: 20 * heightRef
                                         }}
                                     />
-                                    <Text style={styles.t0}>Capetown</Text>
+                                    <Text style={styles.t0}>{doctorData?.city}</Text>
                                 </View>
                             </View>
                             <View style={styles.wr}>
                                 <Text style={styles.tq}>Doctor Description</Text>
                             </View>
                             <View style={styles.bitDoctorScreen}>
-                                <Text style={styles.greyText}>{doctorDescription}</Text>
+                                <Text style={styles.greyText}>{doctor?.speciality[0]?.specialization?.description}</Text>
                             </View>
                         </ScrollView>
                     </View>
                 </View>
             </ScrollView>
-           
-            <StatusBar backgroundColor="#161622" style="light" />
+
+            {/* <StatusBar backgroundColor="#161622" style="light" /> */}
         </SafeAreaView>
     );
 }
@@ -109,7 +153,7 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     buttonWrapper: {
-        marginTop: 10,
+        marginTop: 10 * heightRef,
         bottom: 0,
         width: '100%',
         alignItems: 'center',
@@ -120,27 +164,28 @@ const styles = StyleSheet.create({
     },
     loginRealContainer: {
         backgroundColor: "#1877F2",
-        height: 50,
+        height: 50 * heightRef,
         width: Dimensions.get("window").width - 40,
-        borderRadius: 24,
+        borderRadius: 24 * heightRef,
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 20
+        marginBottom: 20 * heightRef
     },
     sc: {},
     bitDoctorScreen: {
-        marginHorizontal: 15,
-        marginTop: 5,
+        marginHorizontal: 15 * widthRef,
+        marginTop: 5 * heightRef,
     },
     greyText: {
         color: 'grey',
+        fontSize:16 * fontRef
     },
     tq: {
-        marginLeft: 15,
+        marginLeft: 15 * widthRef,
         fontWeight: "bold",
-        fontSize: 24,
+        fontSize: 24 * fontRef,
         color: "#1877F2",
-        margin: 14
+        margin: 14 * heightRef
     },
     wr: {
         justifyContent: "center",
@@ -148,28 +193,30 @@ const styles = StyleSheet.create({
         width: (Dimensions.get('window').width),
     },
     t0: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: 'gray',
+        fontSize: 12 * fontRef,
     },
     rectContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 20,
-        paddingHorizontal: 15,
+        marginTop: 20 * heightRef,
+        paddingHorizontal: 15 * widthRef,
     },
     rect: {
-        width: 105,
-        height: 30,
+        width: 105 * widthRef,
+        height: 30  * heightRef,
         borderColor: 'lightgrey',
         borderWidth: 1,
         borderRadius: 10,
-        marginRight: 5,
-        marginLeft: 5,
+        marginRight: 5  * widthRef,
+        marginLeft: 5 * widthRef,
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row"
     },
     t1: {
-        fontSize: 22,
+        fontSize: 22 * fontRef,
         color: "#1877F2",
         fontWeight: "bold"
     },
@@ -181,13 +228,13 @@ const styles = StyleSheet.create({
         alignItems: "flex-start"
     },
     oval: {
-        height: 90,
+        height: 90  * heightRef,
         width: Dimensions.get('window').width - 30,
         backgroundColor: "whitesmoke",
-        marginTop: 15,
+        marginTop: 15   * heightRef,
         borderRadius: 20,
-        padding: 20,
-        marginLeft: 15
+        padding: 20 * heightRef,
+        marginLeft: 15 * widthRef,
     },
     images: {
         display: "flex",
@@ -212,18 +259,18 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     headerText: {
-        marginTop: 60,
+        marginTop: 60 * heightRef,
         fontWeight: 'bold',
-        fontSize: 30,
+        fontSize: 30 * fontRef,
         justifyContent: 'flex-start',
-        marginBottom: 30,
-        marginLeft: 20,
+        marginBottom: 30 * heightRef,
+        marginLeft: 20 * widthRef,
     },
     contentContainer: {
-        marginLeft: 20,
+        marginLeft: 20 * widthRef,
     },
     footerContainer: {
-        marginRight: 20,
+        marginRight: 20 * widthRef,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -234,7 +281,7 @@ const styles = StyleSheet.create({
     },
     footerText: {
         fontWeight: 'bold',
-        fontSize: 15,
+        fontSize: 15 * fontRef,
     },
     readMore: {
         color: 'blue',

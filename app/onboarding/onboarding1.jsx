@@ -1,15 +1,16 @@
-import { StatusBar } from "expo-status-bar";
+
 // import { Redirect, router } from "expo-router";
 import { View, Text, Image, ScrollView,StyleSheet,TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { images } from "../../constants";
+import { fontRef, heightRef, widthRef } from "../../constants/screenSize";
+
 
 
 const Welcome = ({navigation}) => {
   // const { loading, isLogged } = useGlobalContext();
 
- 
+
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -22,22 +23,22 @@ const Welcome = ({navigation}) => {
       >
 
         <>
-        
+
         <View style={styles.container}>
 
 
           <View
 
           style={styles.spacer1}
-          
+
           ></View>
 
-         
+
 
           {/* <View   style={styles.ImageContainer}> */}
 
 
-         
+
           <Image
             source={images.onBoarding1}
             resizeMode="cover"
@@ -45,19 +46,18 @@ const Welcome = ({navigation}) => {
           />
 
 
-      
-                  
-       
+
+
+
 
       <View style={styles.innerContainer}>
         <Text style={styles.headerText}>Find your Doctor</Text>
         <View style={styles.contentContainer}>
-          <Text>"Your pathway to wellness starts here. Connect with</Text>
-          <Text>compassionate health care professionals effortlessly,</Text>
-          <Text>"guiding you towards optimal health and vitality."</Text>
+          <Text style={{fontSize:14 * fontRef, color:'black', width:'90%'}}>"Your pathway to wellness starts here. Connect with compassionate health care professionals effortlessly,"guiding you towards optimal health and vitality."</Text>
+
           <View style={styles.spacer} />
           <View style={styles.footerContainer}>
-           
+
            <View  style={styles.r5}>
             <View style={styles.cq}></View>
             <View style={styles.cq1}></View>
@@ -76,12 +76,12 @@ const Welcome = ({navigation}) => {
         </View>
       </View>
     </View>
-        
+
         </>
-         
+
       </ScrollView>
 
-      <StatusBar backgroundColor="#161622" style="light" />
+      {/* <StatusBar backgroundColor="#161622" style="light" /> */}
     </SafeAreaView>
   );
 };
@@ -92,20 +92,24 @@ const styles = StyleSheet.create({
 
   cq:{
 
-    height:10,
-    width:25,
+    height:10 * heightRef,
+    width:35 * widthRef,
     backgroundColor:"#1877F2",
-    borderRadius:12
+    borderRadius:12 * heightRef,
+    marginRight:3
 
 
   },
-  
+
   cq1:{
 
-    height:10,
-    width:17,
-    backgroundColor:"grey",
-    borderRadius:12
+    height:10 * heightRef,
+    width:20 * widthRef,
+    backgroundColor:"#f3f3f3",
+    borderRadius:12,
+    marginRight:3,
+    borderWidth:0.2,
+    borderColor:'gray'
 
 
   },
@@ -114,14 +118,14 @@ const styles = StyleSheet.create({
   r5:{
 
     flexDirection:"row",
-  
-    width:200,
-    height:20
+
+    width:200 * widthRef,
+    height:20 * heightRef
 
 
   },
 
-  
+
   ImageContainer:{
 
     height:"100%",
@@ -134,12 +138,12 @@ const styles = StyleSheet.create({
 
     //  marginTop:"50%",
 
-    
-    width:350,
+
+    width:'70%',
     // backgroundColor:"black",
-    
-    flex:2
-    
+
+    height:420 * heightRef
+
   },
 
   container: {
@@ -162,31 +166,34 @@ const styles = StyleSheet.create({
 },
 
   headerText: {
-    marginTop: 60,
+    marginTop: 40  * heightRef,
     fontWeight: 'bold',
-    fontSize: 30,
+    fontSize: 25 * fontRef,
     justifyContent: 'flex-start',
-    marginBottom: 30,
-    marginLeft: 20,
+    marginBottom: 30 * heightRef,
+    marginLeft: 20 * widthRef,
+    color:'black'
   },
   contentContainer: {
-    marginLeft: 20,
+    marginLeft: 20 * widthRef,
   },
   footerContainer: {
-    marginRight: 20,
+    marginRight: 20 * widthRef,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
   spacer: {
-    height: '33%',
+    height: '25%',
   },
   spacer1: {
     height: '16%',
   },
   footerText: {
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 18 * fontRef,
+    marginRight:10 * widthRef,
+    color:'black'
   },
 });

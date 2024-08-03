@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Button, View, StyleSheet, Text } from 'react-native'; // Import StyleSheet
+import { Button, View, StyleSheet, Text, LogBox } from 'react-native'; // Import StyleSheet
 import StackNavigator from './naigation/stack-navigation';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { Provider } from 'react-redux';
 import { store } from '../store';
+import { AuthContextProvider } from '../context/Authcontext';
+import FlashMessage from 'react-native-flash-message';
 
 
 const STRIPE_KEY =
@@ -12,20 +14,24 @@ const STRIPE_KEY =
 
 
 const App = () => {
- 
+  LogBox.ignoreAllLogs()
+
   return (
 
     <Provider store={store}>
-    <StripeProvider publishableKey={STRIPE_KEY}>
-    <StackNavigator/>
-    </StripeProvider>
+      <StripeProvider publishableKey={STRIPE_KEY}>
+        <AuthContextProvider>
+          <StackNavigator />
+          <FlashMessage position="top" />
+        </AuthContextProvider>
+      </StripeProvider>
     </Provider>
   )
 
 };
 
 const styles = StyleSheet.create({
- 
+
 });
 
 export default App;

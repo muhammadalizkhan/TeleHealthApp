@@ -1,28 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, FlatList, TouchableOpacity, ActivityIndicator, Image, ScrollView } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { StyleSheet, Text, View, Dimensions, TextInput, FlatList, TouchableOpacity, ActivityIndicator, Image, ImageBackground, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesome } from '@expo/vector-icons'; 
-import { useNavigation } from '@react-navigation/native';
+// import { FontAwesome } from '@expo/vector-icons';
 
-import { NavigationContainer } from '@react-navigation/native';
 import { images } from '../../constants';
-import DrawerNavigator from '../drawer/DrawerNavigator';
+import Icons from 'react-native-vector-icons/dist/Entypo';
+import Iconss from 'react-native-vector-icons/dist/Ionicons';
+import { AuthContext } from '../../context/Authcontext';
+import { StackActions } from '@react-navigation/native';
+import { getAllDoctors, getDoctorBySpecialityIds, getSpecialist } from '../../constants/APi';
+import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+
+
 
 // Define DrawerContent component
 const DrawerContent = ({ navigation }) => {
     const closeDrawer = () => {
-      navigation.closeDrawer();
+        navigation.closeDrawer();
     };
-  
+
     return (
-      <View style={styles.drawerContent}>
-        <TouchableOpacity onPress={closeDrawer}>
-          <Text>Close Drawer</Text>
-        </TouchableOpacity>
-        {/* Add additional content here */}
-      </View>
+        <View style={styles.drawerContent}>
+            <TouchableOpacity onPress={closeDrawer}>
+                <Text>Close Drawer</Text>
+            </TouchableOpacity>
+            {/* Add additional content here */}
+        </View>
     );
-  };
+};
 
 
 const HomeScreen = ({ navigation }) => {
@@ -30,37 +35,95 @@ const HomeScreen = ({ navigation }) => {
     const [appointments, setAppointments] = useState([]);
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState({ _id: "all", name: "All" });
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [filteredDoctors, setFilteredDoctors] = useState([]);
+    const { logout, loggedIn, userData } = useContext(AuthContext);
+    const [topSpecialists, setTopSpecialists] = useState([]);
 
-    
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
+    // console.log('user data ==> ',userData)
+    useEffect(() => {
+        if (loggedIn === false) {
+            navigation.dispatch(StackActions.replace('Home'));
+        }
+    }, [loggedIn]);
 
-
-    const handleInputChange = (text) => {
-        setInputText(text);
+    const toggleDrawer = () => {
+        setIsDrawerOpen(!isDrawerOpen);
     };
 
+    const getDoctorsBySid = (selectedSpecialityId) => {
+        if (selectedSpecialityId === "all") {
+            setFilteredDoctors(doctors);
+        } else {
+            const filtered = doctors.filter(doctor =>
+                doctor.speciality.some(spec => spec.specialization._id === selectedSpecialityId)
+            );
+            setFilteredDoctors(filtered);
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('https://api-dev.mhc.doginfo.click/get-all-specializations');
-                const data = await response.json();
-                const response2 = await fetch('https://api-dev.mhc.doginfo.click/get-all-doctors');
-                const data2 = await response2.json();
-                setAppointments(data); 
-                setDoctors(data2); 
-                setLoading(false); 
+                const doctorsData = await getAllDoctors();
+                setDoctors(doctorsData);
+                console.log('doctors== > ', JSON.stringify(doctorsData, null,2))
+                setFilteredDoctors(doctorsData);
+                setTopSpecialists(doctorsData); // Set top specialists initially
+                setLoading(false);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching doctors:', error);
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchSData = async () => {
+            try {
+                const response = await getSpecialist()
+                const data = await response;
+                // console.log('data ==> ', JSON.stringify(data, null,2))
+                // console.log('data2 ==> ', data2)
+                const allOption = { _id: "all", name: "All" };
+                const updatedAppointments = [allOption, ...data];
+                setAppointments(updatedAppointments);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching special data:', error);
                 setLoading(false);
             }
         };
 
-        fetchData();
+        fetchSData();
     }, []);
+
+    const handleSearch = (text) => {
+        setInputText(text);
+        const searchLower = text.toLowerCase();
+
+        if (text === '') {
+            setFilteredDoctors(doctors);
+            setTopSpecialists(doctors);
+        } else {
+            const filtered = doctors.filter(doctor =>
+                doctor.firstName.toLowerCase().includes(searchLower) ||
+                doctor.lastName.toLowerCase().includes(searchLower) ||
+                doctor.speciality.some(spec => spec.specialization.name.toLowerCase().includes(searchLower))
+            );
+            setTopSpecialists(filtered);
+            if (selectedItem._id === 'all') {
+                setFilteredDoctors(filtered);
+            } else {
+                setFilteredDoctors(filtered.filter(doctor =>
+                    doctor.speciality.some(spec => spec.specialization._id === selectedItem._id)
+                ));
+            }
+        }
+    };
+
 
     if (loading) {
         return (
@@ -71,27 +134,32 @@ const HomeScreen = ({ navigation }) => {
     }
 
     return (
-        
-        <SafeAreaView>
-            <View style={styles.container}>
 
-              
+        <SafeAreaView>
+            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{flexGrow:1}}>
+
+
+            <View style={[styles.container, { justifyContent: 'space-around' }]}>
+
+
+
                 <View style={styles.searchContainer}>
-                <View style={styles.circularBox}>
-                        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-                            <View style={{ height: 5, width: 16, backgroundColor: "white", borderRadius: 10 }} />
-                        </View>
-                        <View style={{ flexDirection: "row", justifyContent: "flex-start", marginTop: 10 }}>
-                            <View style={{ height: 5, width: 16, backgroundColor: "white", borderRadius: 10 }} />
-                        </View>
+                    <View style={styles.input}>
+                        <Iconss name={'locate'} size={25} color={'#DAD9D9'} />
+
+                        <TextInput
+                            style={{ marginLeft: 10 * widthRef, width: '80%', fontSize: 16 * fontRef, color: 'black' }}
+                            onChangeText={handleSearch}
+                            value={inputText}
+                            placeholder="Search Specialist"
+                            placeholderTextColor={'#DAD9D9'}
+                        />
+
+
+                            <Iconss name={'search'} size={25} color={'#DAD9D9'} />
+
                     </View>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={handleInputChange}
-                        value={inputText}
-                        placeholder="Search Specialist"
-                    />
-                 
+
                 </View>
 
                 <View style={styles.heading}>
@@ -99,31 +167,49 @@ const HomeScreen = ({ navigation }) => {
                 </View>
 
                 <View style={styles.des}>
-    <FlatList
-        horizontal
-        data={doctors}
-        renderItem={({ item }) => (
-            <View style={styles.appointmentItem}>
-                {/* Render image with absolute positioning */}
-                <Image
-    source={images.doctorCard}
-    style={[styles.image, styles.absoluteImage, { resizeMode: 'cover', marginTop: 5 }]}
-/>
+                    <FlatList
+                        horizontal
+                        data={topSpecialists }
+                        nestedScrollEnabled={true}
+
+                        renderItem={({ item }) => (
+                            <View style={styles.appointmentItem}>
+                                <ImageBackground source={images.Card} resizeMode='cover' style={{ width: '100%', height: 125 * heightRef }}>
+                                    {/* Render image with absolute positioning */}
+                                    {/* <Image
+                                        source={images.doctorCard}
+                                        style={[styles.image, styles.absoluteImage, { resizeMode: 'cover', marginTop: 5 }]}
+                                    /> */}
+                                    <View style={{width:140 * heightRef, height:140 * heightRef, borderWidth:0,borderColor:'white',
+                                        position:'absolute', bottom:0, right:10, justifyContent:'center',
+                                        alignItems:'center'
+                                    }}>
+                                    <Image
+                                        source={{ uri: item.profileImg }}
+                                        style={[styles.image,  ]}
+                                    />
+                                    </View>
 
 
-                {/* Other content */}
-                <Text style={styles.t1}>{item.firstName}{item.lastName}</Text>
-                <Text style={styles.t2}>Radiologist</Text>
-                <Text style={styles.t3}>500+ points</Text>
-                <View style={styles.contain1}>
-                    <FontAwesome name="plus" size={12} color="white" />
-                    <Text style={styles.t5}> Appointment</Text>
+                                    {/* Other content */}
+                                    <Text style={styles.t1}>{item.firstName} {item.lastName}</Text>
+                                    <Text style={styles.t2}>{item.speciality[0].specialization.name}</Text>
+                                    <Text style={styles.t3}>500+ points</Text>
+                                    <TouchableOpacity style={styles.contain1}
+                                     onPress={() => {
+                                        navigation.navigate('doctor-profile', {
+                                          data : item
+                                        });
+                                    }}>
+                                        <Iconss name="add-circle" size={24 * fontRef} color="#9ccaff" />
+                                        <Text style={styles.t5}> Appoint</Text>
+                                    </TouchableOpacity>
+                                </ImageBackground>
+                            </View>
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
                 </View>
-            </View>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-    />
-</View>
 
 
                 <View style={styles.heading1}>
@@ -133,45 +219,49 @@ const HomeScreen = ({ navigation }) => {
                 <View style={styles.des1}>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                         <View style={styles.subSpecializationContainer}>
-                            {appointments.map(item => 
-                                item.subspecialization.map(subSpecializationItem => (
+                            {appointments.map(item =>
+
                                     <TouchableOpacity
-                                        key={subSpecializationItem._id}
-                                        onPress={() => setSelectedItem(subSpecializationItem.name)}
+                                        key={item._id}
+                                         onPress={() => {
+                                        setSelectedItem(item);
+                                        getDoctorsBySid(item._id);
+                                    }}
                                         style={[
                                             styles.contain,
-                                            selectedItem === subSpecializationItem.name && { borderColor: 'blue' },
+                                            selectedItem?.name === item.name && { borderColor: '#1877F2' },
                                         ]}
                                     >
-                                        <Text style={{ color: selectedItem === subSpecializationItem.name ? 'blue' : 'grey' }}>
-                                            {subSpecializationItem.name}
+                                        <Text style={{ color: selectedItem?.name === item.name ? '#1877F2' : 'lightgrey',
+                                            fontWeight:'600'
+                                         }}>
+                                            {item.name}
                                         </Text>
                                     </TouchableOpacity>
-                                ))
+
                             )}
                         </View>
                     </ScrollView>
                 </View>
 
                 <FlatList
-                    data={doctors}
+                    data={filteredDoctors}
+                    nestedScrollEnabled={true}
                     renderItem={({ item }) => (
                         <View style={styles.appointmentItem1}>
                             <View style={styles.image1}>
-                                <Image source={{ uri: item.profileImg }} style={{ width: 110, height: 110, borderRadius: 10 }} />
+                                <Image source={{ uri: item.profileImg }}
+                                 style={{ width: 110 * heightRef, height: 110 * heightRef, borderRadius: 24 * heightRef }} />
                             </View>
                             <View style={styles.contain2}>
                                 <Text style={styles.h1}>{item.firstName} {item.lastName}</Text>
-                                <Text style={styles.h2}>Dermatologist</Text>
+                                <Text style={styles.h2}>{item.speciality[0].specialization.name}</Text>
                                 <Text style={styles.h2}>Mon-Fri | 9:00 Am to 5:00 Pm</Text>
-                                <TouchableOpacity 
-                                    style={styles.buttonContainer}  
+                                <TouchableOpacity
+                                    style={styles.buttonContainer}
                                     onPress={() => {
                                         navigation.navigate('doctor-profile', {
-                                            name: item.firstName + ' ' + item.lastName,
-                                            description: item.about,
-                                            doctor: item,
-                                            doctorImage: item.profileImg
+                                          data : item
                                         });
                                     }}
                                 >
@@ -181,8 +271,11 @@ const HomeScreen = ({ navigation }) => {
                         </View>
                     )}
                     keyExtractor={(item, index) => index.toString()}
+                    contentContainerStyle={{ paddingBottom: 30 }}
                 />
             </View>
+
+            </ScrollView>
         </SafeAreaView>
     );
 };
@@ -196,82 +289,91 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonContainer: {
+        width: 100 * widthRef,
+        height: 35 * heightRef,
         backgroundColor: '#007bff',
-        borderRadius: 7,
-        marginLeft: 13,
-        marginRight: 13,
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingTop: 5,
-        paddingBottom: 5,
-        marginTop: 10,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 0,
+        marginRight: 13 * widthRef,
+        paddingLeft: 20 * widthRef,
+        paddingRight: 20 * widthRef,
+        paddingTop: 0,
+        paddingBottom: 0,
+        marginTop: 10 * heightRef,
     },
     buttonText: {
         color: '#ffffff',
         fontWeight: 'bold',
-        textAlign: 'center',
+        fontSize: 13 * fontRef,
     },
     h1: {
-        fontSize: 21,
+        fontSize: 21 * fontRef,
         fontWeight: "bold",
+        color: 'black'
     },
     h2: {
-        color: "grey",
-        fontSize: 13,
+        color: 'gray',
+        fontSize: 13 * fontRef,
     },
     t1: {
         color: "white",
-        fontSize: 19,
+        fontSize: 18 * fontRef,
         fontWeight: "bold",
+        marginTop: 0
     },
     t5: {
-        fontSize: 12,
+        fontSize: 12 * fontRef,
         color: "white",
-        marginLeft: 5,
+        marginLeft: 5 * widthRef,
     },
     t2: {
         color: "white",
-        fontSize: 15,
+        fontSize: 14 * fontRef,
     },
     t3: {
         color: "white",
-        fontSize: 10,
+        fontSize: 12 * fontRef,
     },
     contain1: {
-        marginTop: 10,
+        marginTop: 10 * heightRef,
         flexDirection: "row",
-        height: 26,
-        justifyContent: "center",
+        height: 35 * heightRef,
+        // justifyContent: "center",
+        paddingLeft: 6 * widthRef,
         alignItems: "center",
         borderWidth: 1,
         borderColor: "white",
-        borderRadius: 20,
-        width: 120,
+        borderRadius: 20 * heightRef,
+        width: 100 * widthRef,
     },
     contain: {
-        height: 30,
+        height: 40 * heightRef,
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "grey",
-        borderRadius: 10,
-        marginTop: 7,
-        margin: 2,
-        paddingLeft: 12,
-        paddingRight: 12,
+        borderColor: "#DAD9D9",
+        borderRadius: 20 * heightRef,
+        marginTop: 7 * heightRef,
+        margin: 5 * heightRef,
+        paddingLeft: 12 * widthRef,
+        paddingRight: 12 * widthRef,
     },
     des1: {
-        marginLeft: 15,
-        width: Dimensions.get('window').width,
+
+        marginLeft: 15 * widthRef,
+        width:'100%',
     },
     des: {
-        height: 150,
+        height: 160 * heightRef,
     },
     text2: {
-        marginLeft: 15,
-        fontSize: 17,
+        marginLeft: 15 * widthRef,
+        fontSize: 22 * fontRef,
         fontWeight: 'bold',
-        marginTop: 15,
+        marginTop: 15 * heightRef,
+        color: 'black'
     },
     heading: {
         flexDirection: 'row',
@@ -283,92 +385,97 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         width: Dimensions.get('window').width,
-        // marginBottom:30
+        marginBottom: 10 * heightRef,
     },
     container: {
         alignItems: 'center',
         height: Dimensions.get('window').height,
+        backgroundColor: 'white'
         // flex:1
     },
     searchContainer: {
+        marginTop: 20 * heightRef,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         width: Dimensions.get('window').width,
-        paddingLeft: 15,
-        paddingRight: 15,
+        paddingLeft: 15 * widthRef,
+        paddingRight: 15 * widthRef,
     },
     input: {
-        marginTop: 20,
-        height: 40,
-        width: '80%',
-        borderColor: 'gray',
+        height: 50 * heightRef,
+        width: '100%',
+        borderColor: '#DAD9D9',
+        alignItems: 'center',
+        flexDirection: 'row',
         borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 10,
-        borderRadius: 8,
+        marginBottom: 10 * heightRef,
+        paddingHorizontal: 10 * widthRef,
+        borderRadius: 10,
     },
     circularBox: {
-        width: 40,
-        height: 40,
+        width: 40 * widthRef,
+        height: 40 * heightRef,
         backgroundColor: '#1877F2',
         borderRadius: 10,
-        marginLeft: 10,
-        padding: 10,
-        marginTop: 10,
+        marginLeft: 10 * widthRef,
+        padding: 10 * heightRef,
+        marginTop: 10 * heightRef,
     },
     appointmentItem: {
         position: 'relative', // Required for absolute positioning
-        padding: 12,
+        padding: 14 * heightRef,
+        paddingLeft: 20 * widthRef,
+        paddingRight: 0,
         backgroundColor: '#1877F2',
-        margin: 10,
-        marginLeft: 15,
-        marginBottom: 10,
-        borderRadius: 20,
+        margin: 10 * heightRef,
+        marginLeft: 15 * widthRef,
+        marginBottom: 10 * heightRef,
+        borderRadius: 24,
         width: Dimensions.get('window').width - 60,
-        height: 120,
+        height: 140 * heightRef,
         overflow: 'visible', // Allows content to overflow
-        marginTop:20
+        marginTop: 20 * heightRef,
     },
     image: {
-        width: 100,
-        height: 140,
+        width: 130 * heightRef,
+        height: 130 * heightRef,
         borderWidth: 1,
         // borderColor: 'grey',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 5,
+        marginLeft: 5 * widthRef,
     },
     absoluteImage: {
         position: 'absolute',
-        top: -25, // Adjust as needed to position the image partially outside
+        top: -10, // Adjust as needed to position the image partially outside
         // left: 200, // Adjust as needed to position the image partially outside
-        right:10
+        right: 10
     },
     image1: {
-        width: 110,
-        height: 110,
+        width: 110 * heightRef,
+        height: 110 * heightRef,
         borderWidth: 1,
         borderColor: 'grey',
-        borderRadius: 10,
+        borderRadius: 24 * heightRef,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 5,
+        marginLeft: 5 * widthRef,
     },
     contain2: {
         flex: 2,
-        marginLeft: 15,
+        marginLeft: 15 * widthRef,
     },
     appointmentItem1: {
         borderWidth: 1,
         borderColor: '#A9A9A9',
-        margin: 7,
-        marginLeft: 10,
-        marginBottom: 5,
-        borderRadius: 14,
+        margin: 10 * heightRef,
+        marginLeft: 10 * widthRef,
+        marginBottom: 5     * heightRef,
+        borderRadius: 24 * heightRef,
         width: Dimensions.get('window').width - 22,
-        height: 120,
+        height: 130 * heightRef,
         flexDirection: "row",
         alignItems: 'center',
     },
@@ -376,4 +483,43 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
+    top: {
+        width: '100%',
+        height: 70 * heightRef,
+        backgroundColor: 'white',
+        paddingVertical: 15 * heightRef,
+        paddingHorizontal: 15 * widthRef,
+        flexDirection: 'row'
+    },
+
 });
+{/*<View style={styles.top}>*/}
+{/*    <Pressable >*/}
+{/*        <Image*/}
+{/*            source={images.Menu}*/}
+{/*            style={{ height: 35, width: 35 }}*/}
+{/*        />*/}
+{/*    </Pressable>*/}
+
+{/*    <View style={{*/}
+{/*        flexDirection: 'row', width: 190, backgroundColor: '#F3F3F3',*/}
+{/*        marginLeft: 20, borderRadius: 20,*/}
+{/*        height: 46, alignItems: 'center',*/}
+{/*        paddingHorizontal: 10*/}
+{/*    }}>*/}
+{/*        <Icons name={'location-pin'} size={25} color={'black'} />*/}
+{/*        <Text style={{ fontSize: 14, color: 'black', fontWeight: '600', marginLeft: 10, marginRight: 40 }}>Sargodha</Text>*/}
+{/*        <Icons name={'chevron-down'} size={25} color={'black'} />*/}
+{/*    </View>*/}
+{/*    <View style={{ flexDirection: 'row', width: '34%', justifyContent: 'flex-end', marginTop: 5 }}>*/}
+{/*        <Image*/}
+{/*            source={images.Bell}*/}
+{/*            style={{ height: 32, width: 32 }}*/}
+{/*        />*/}
+{/*        <Image*/}
+{/*            source={images.Cart}*/}
+{/*            resizeMode='contain'*/}
+{/*            style={{ height: 30, width: 30, marginLeft: 10 }}*/}
+{/*        />*/}
+{/*    </View>*/}
+{/*</View>*/}

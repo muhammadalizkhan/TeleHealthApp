@@ -7,84 +7,172 @@ import UpcomingSchedule from '../../components/upcoming-schedule';
 import DoctorPrescription from './component/doctors-prescription';
 import PdfResult from './component/pdf-result';
 import PrescribedCenter from './component/prescribed-center';
-const Prescription = () => {
+import { useRoute } from '@react-navigation/native';
+import Icons from 'react-native-vector-icons/dist/Ionicons';
+import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+
+const Prescription = ({ navigation, }) => {
+
+  const route = useRoute(); // Access route
+  const { data } = route.params || {};
+  console.log('data', JSON.stringify(data, null, 2))
   return (
-    <View>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.appBar}>
-          <View style={styles.appBarpatr1}>
-            <Text style={styles.h1}>Prescription</Text>
-          </View>
-          <View style={styles.circularBox}>
-            <Image
-              source={images.Download}
-              resizeMode="contain"
-              style={{ height: 25, width: 25 }}
-            />
-          </View>
+    <SafeAreaView style={styles.container}>
+
+      <View style={styles.appBar}>
+        <View style={styles.appBarpatr1}>
+          <TouchableOpacity onPress={() => navigation.goBack()} >
+            <Icons name={'chevron-back'} size={30} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.h1}>Prescription</Text>
         </View>
+        <View style={styles.circularBox}>
+          <Image
+            source={images.Download}
+            resizeMode="contain"
+            style={{ height: 25, width: 25 }}
+          />
+        </View>
+      </View>
+      <View style={styles.spacer} />
+      <View style={{ padding: 20 }}>
+
+        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Medicines</Text>
+        {data.medications && data.medications.map((med, index) => (
+          <Text key={index} style={{ color: "grey", marginTop: 5 }}>{med.medication} ({med.dosage})</Text>
+        ))}
+
         <View style={styles.spacer} />
 
-
-        <Text style={{fontSize:17, color:"#1877F2", fontWeight:"bold"}}>Medicines</Text>
-        <Text style={{color:"grey", marginTop:5}}>Aastrovanstrin(Lipitor) 20 mg</Text>
-        <Text style={{color:"grey", marginTop:5}}>Metoprolol(Lopressor) 50 mg</Text>
-        <Text style={{color:"grey", marginTop:5}}>Aaspirin(Bayer) 81 mg</Text>
-
-        <View style={styles.spacer} />
-        
-        <Text style={{fontSize:17, color:"#1877F2", fontWeight:"bold"}}>Injections</Text>
+        {/* <Text style={{fontSize:17, color:"#1877F2", fontWeight:"bold"}}>Injections</Text>
         <Text style={{color:"grey", marginTop:5}}>Nitroglycerin(Nitrostat) 40 mg</Text>
-        
+
         <Text style={{color:"grey", marginTop:5}}>Enoxaparin(Lovenox) 0 mg</Text>
-  
+
+        <View style={styles.spacer} /> */}
+
+        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Tests</Text>
+        {data.visits[0]?.recommendedTests?.labTest.map((test, index) => (
+          <Text key={index} style={{ color: "grey", marginTop: 5 }}>{test.testName}</Text>
+        ))}
+
         <View style={styles.spacer} />
-        
-        <Text style={{fontSize:17, color:"#1877F2", fontWeight:"bold"}}>Tests</Text>
-        <Text style={{color:"grey", marginTop:5}}>Electrodiagram(ECG OR EKG)</Text>
-        
-        <View style={styles.spacer} />
-        
-        <Text style={{fontSize:17, color:"#1877F2", fontWeight:"bold"}}>Note</Text>
-        <Text style={{color:"grey", marginTop:5}}>Take your medications as prescribed daily</Text>
-        <Text style={{color:"grey", marginTop:5}}>Monitor for unsusal symtoms and side effects</Text>
-        <Text style={{color:"grey", marginTop:5}}>Attend your scheduled test appointmnet properly</Text>
-          
-        <View style={styles.spacer} />
-        
-        <Text style={{fontSize:17, color:"#1877F2", fontWeight:"bold"}}>Recomended Lab</Text>
+
+        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Note</Text>
+        <Text style={{ color: "grey", marginTop: 5 }}>{data?.visits[0]?.notes}</Text>
 
 
-        <View style={{flexDirection:"row", justifyContent:"space-around"}}>
-        <PrescribedCenter/>
-        <PrescribedCenter/>
+        <View style={styles.spacer} />
 
+        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Recomended Lab</Text>
+
+
+        <View style={{ flexDirection: "row",  }}>
+
+          {/* <PrescribedCenter/> */}
+          {/* <PrescribedCenter/> */}
+
+          <View style={styles.containerr}>
+
+            <View style={styles.smallConatiner}>
+
+              <Image
+                source={images.firstAid}
+                resizeMode="cover"
+
+                style={{
+                  height: 80 * heightRef,
+                  width: 145 * heightRef,
+
+
+
+                }}
+
+
+              />
+
+              <View style={styles.r1}>
+
+                <Text style={{ fontSize: 15 * fontRef, fontWeight: "bold", color:'black' }}>{data?.visits[0]?.recommendedTests?.diagnosticCenter?.centerName}</Text>
+
+                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{color:'grey'}}>4.5 </Text>
+
+                  <Image
+                    source={images.star}
+                    resizeMode="contain"
+
+                    style={{
+                      height: 10,
+                      width: 10,
+
+
+
+                    }}
+
+
+                  />
+
+
+
+                </View>
+              </View>
+
+
+              <View style={styles.r1}>
+                <View>
+
+                  <Text style={{ color: "grey", fontSize: 10 }}>Mon-Fri</Text>
+
+                  <Text style={{ color: "grey", fontSize: 10 }}>9:00 am to 5:00pm</Text>
+
+
+                </View>
+
+{/*
+                <Image
+                  source={images.Arrow}
+                  resizeMode="contain"
+
+                  style={{
+                    height: 15,
+                    width: 15,
+
+
+
+                  }}
+
+
+                /> */}
+
+
+
+              </View>
+
+
+            </View>
+
+          </View>
 
         </View>
 
-    
 
 
+      </View>
 
-      </SafeAreaView>
-    </View>
+    </SafeAreaView>
+
   )
 }
 
 export default Prescription
 
 const styles = StyleSheet.create({
-  h1:{
-
-    fontWeight:"bold",
-    
 
 
-  },
+  h2: {
 
-  h2:{
-
-    fontWeight:"bold"
+    fontWeight: "bold"
 
 
   },
@@ -122,6 +210,8 @@ const styles = StyleSheet.create({
   h1: {
     fontWeight: "bold",
     fontSize: 22,
+    color: 'black',
+    marginLeft: 10
   },
   appBar: {
     flexDirection: "row",
@@ -137,13 +227,44 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
 
-    justifyContent:"center",
+    justifyContent: "center",
 
     borderRadius: 50,
   },
   container: {
-    marginTop: 14,
-    padding: 20,
+    // marginTop: 14,
+    // padding: 20,
     justifyContent: "flex-start",
   },
+  r1: {
+
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 5
+
+
+  },
+
+
+  containerr: {
+marginTop:10,
+    borderWidth: 1,
+    borderColor: "grey",
+    height: 180 * heightRef,
+    width: 155 * widthRef,
+    borderRadius: 20,
+    justifyContent: "flex-start",
+    alignItems: "center"
+  },
+
+  smallConatiner: {
+    marginTop: 5,
+
+
+    height: 110,
+    width: 145,
+    borderRadius: 20
+
+
+  }
 });
