@@ -1,5 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { View, Text, ScrollView, Dimensions, TextInput, Alert, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+	View,
+	Text,
+	ScrollView,
+	Dimensions,
+	TextInput,
+	Alert,
+	Image,
+	StyleSheet,
+	TouchableOpacity,
+	ActivityIndicator
+} from "react-native";
 import {Button, withTheme} from 'react-native-paper';
 import {StackActions} from '@react-navigation/native';
 import { AuthContext } from '../../context/Authcontext';
@@ -13,12 +24,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignIn = ({navigation,route}) => {
 	// const {colors} = theme;
-  const { role } = route.params; 
+  const { role } = route.params;
   console.log(role,'=======')
 	const {loggedIn} = useContext(AuthContext);
 	const [email, setEmail] = useState();
 	const [password, setPassword] = useState();
 	const [showPassword, setShowPassword] = useState(true);
+    const [ press, setPress] = useState(false);
 
 	const toggleHelper = () => {
 		setShowPassword(!showPassword)
@@ -28,7 +40,7 @@ const SignIn = ({navigation,route}) => {
 const handleLoginPress = async () => {
 	// Trimmed email and password
 	console.log('pressed')
-  
+
 	if (!email || !password) {
 	  showMessage({
 		message: 'Please Enter Email and Password.',
@@ -36,7 +48,7 @@ const handleLoginPress = async () => {
 	  });
 	  return;
 	}
-  
+
 	// Email validation
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	if (!emailRegex.test(email)) {
@@ -46,26 +58,26 @@ const handleLoginPress = async () => {
 	  });
 	  return;
 	}
-  
+
 	const data = {
 	  email: email,
 	  password: password,
 	};
-  
+
 	console.log('data: ', data);
-  
+
 	try {
 	  const response = await doctorLogin('/doctor/login', data);
 	  console.log('response == ', JSON.stringify(response, null, 2));
-  
+
 	  // Save the response in AsyncStorage
 	  await AsyncStorage.setItem('DoctorData', JSON.stringify(response));
-  
+
 	  showMessage({
 		message: 'Login Successed.',
 		type: "success",
 	  });
-  
+
 	  // Navigate to the desired screen
 	  navigation.navigate('DParent-screen');
 	} catch (error) {
@@ -76,69 +88,35 @@ const handleLoginPress = async () => {
 	  });
 	}
   };
-	// const handleLoginPress = async () => {
-	// 	// Trimmed email and password
-		
-	// 	console.log('pressed')
-	
-	  
-	// 	if (!email || !password) {
-	// 		showMessage({
-	// 		  message: 'Please Enter Email and Password.',
-	// 		  type: "danger",
-	// 		});
-	// 		return;
-	// 	  }
-	// 	// Email validation
-	// 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	// 	if (!emailRegex.test(email)) {
-	// 		showMessage({
-	// 			message: 'Please enter a valid email address.',
-	// 			type: "danger",
-	// 		  });
-	// 	//   Alert.alert('Validation Error', 'Please enter a valid email address.');
-	// 	  return;
-	// 	}
-	  
-	// 	const data = {
-	// 	  email: email,
-	// 	  password: password,
-	// 	};
-	  
-	// 	console.log('data: ', data);
-	  
-	// 	try {
-	// 	  const response = await doctorLogin('/doctor/login', data);
-	// 	  console.log('response == ', JSON.stringify(response,null,2));
-	// 	  showMessage({
-	// 		message: 'Login Successed.',
-	// 		type: "success",
-	// 	  });
-	// 	  // Assuming you set a token or some login flag here
-	// 	  // loggedIn(response.token);
-	  
-	// 	//   Alert.alert('Login Successful', `Welcome back, `);
-	// 	  navigation.navigate('DParent-screen'); // Navigate to the desired screen
-	// 	} catch (error) {
-	// 		showMessage({
-	// 			message: 'Login Failed',
-	// 			description: error.message,
-	// 			type: 'danger',
-	// 		  });
-	// 	//   Alert.alert('Login Failed', error.message);
-	// 	}
-	//   };
-	  
-	
+
+
 
 	  useEffect(() => {
 		if (loggedIn) {
+			setPress(false);
 		  navigation.dispatch(StackActions.replace('parentscreen'));
 		}
 	  }, [loggedIn]);
 
 
 	const {login} = useContext(AuthContext);
+
+	const setCheckItem = async () => {
+		try {
+			await AsyncStorage.setItem('check', JSON.stringify(true));
+			console.log('Item set in AsyncStorage');
+		} catch (error) {
+			console.error('Error setting item in AsyncStorage:', error);
+		}
+	};
+
+
+	const handlePress = async () => {
+		await login();
+		await setCheckItem();
+		setPress(true);
+	};
+
 
 	return (
 		<SafeAreaView>
@@ -149,11 +127,11 @@ const handleLoginPress = async () => {
 			<Text style={styles.text1}>Welcome!</Text>
 			<Text style={styles.text2}>Login your account or register</Text>
 			<Text style={styles.text2}>to create an account</Text>
-  
+
 			<View style={styles.spacer}></View>
 			<View style={styles.spacer}></View>
 			<View style={styles.spacer}></View>
-  
+
 			<View style={styles.innerContainer}>
 			  <Text style={styles.text3}>Your Email</Text>
 			</View>
@@ -166,39 +144,39 @@ const handleLoginPress = async () => {
 			  />
 			  <Icon name="mail" size={24} color="grey" />
 			</View>
-  
+
 			<View style={styles.spacer}></View>
-  
+
 			<View style={styles.innerContainer}>
 			  <Text style={styles.text3}>Password</Text>
 			</View>
-  
+
 			<View style={styles.container1}>
 			  <TextInput
 				style={styles.input}
 				keyboardType="default"
-				secureTextEntry={!showPassword} 
+				secureTextEntry={!showPassword}
 				onChangeText={(text) => setPassword(text)}
 				value={password}
-			  /> 
+			  />
 			  <TouchableOpacity onPress={() =>toggleHelper()}>
 				<Icon name={showPassword ? "eye" : "eyeo"} size={24} color={showPassword ? "#1877F2" : "grey"} />
 			  </TouchableOpacity>
 			</View>
-  
+
 			<View style={styles.forgetconteiner}>
 			  <TouchableOpacity onPress={() => {}}>
 				<Text style={styles.forgetpassword}>Forget Password?</Text>
 			  </TouchableOpacity>
 			</View>
-  
-		
+
+
 			<View style={styles.spacer4}></View>
-  
-			
-  
+
+
+
 			<View style={styles.spacer4}></View>
-  
+
 			<View style={styles.buttonwrapper}>
 			  <TouchableOpacity onPress={() => handleLoginPress()}>
 				<View style={styles.loginrealContainer}>
@@ -206,33 +184,41 @@ const handleLoginPress = async () => {
 				</View>
 			  </TouchableOpacity>
 			</View>
-  
-	
-  
+
+
+
 			<View style={styles.spacerul}></View>
-		  </View> ) 
+		  </View> )
 		  :
 		  (
 			<View style={[ styles.container, ]}>
-			
+
 			<Text style={styles.text1}>Welcome!</Text>
-			   <Text style={styles.text2}>Login your account or register</Text>
-			   <Text style={styles.text2}> to create an account with Auth0</Text>
-	
-			   <View style={styles.spacer}></View>
+				{ !press  && <Text style={styles.text2}>Login your account or register</Text>}
+				{!press && <Text style={styles.text2}> to create an account with Auth0</Text>}
+
+				{press && <Text style={styles.text2}> Please wait ...</Text>}
+
+				<View style={styles.spacer}></View>
+				<View style={styles.spacer}></View>
+
+				{press && <ActivityIndicator size="large" color="#1877F2" />}
+
+
+				<View style={styles.spacer}></View>
 			  <View style={styles.spacer}></View>
 						 <View style={styles.spacer}></View>
-				<TouchableOpacity onPress={() => login()} style={styles.button}>
-				 
+				{!press && <TouchableOpacity onPress={() => handlePress()} style={styles.button}>
+
 					<Text style={styles.text4}>Login</Text>
-			   
-				</TouchableOpacity>
-			  
-		
+
+				</TouchableOpacity>}
+
+
 			</View>
 		  ) }
 
-		 
+
 		</ScrollView>
 	  </SafeAreaView>
 
@@ -262,7 +248,7 @@ const styles = StyleSheet.create({
 	  },
 	  text2: {
 		color: "grey"
-	  }, 
+	  },
 	   buttonwrapper: {
 		width: '100%',
 		paddingLeft: 20,

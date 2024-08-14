@@ -30,7 +30,9 @@ const DoctorProfile = () => {
 
 
 
-                    <View style={{ height: 300 * heightRef, width: 300 * widthRef, justifyContent: "center", alignItems: "center" }}>
+                    <View style={{ height: 270 * heightRef, width: 270 * widthRef,
+                        justifyContent: "center", alignItems: "center" ,
+                        backgroundColor:'white', borderRadius:16, marginBottom:10}}>
 
 
                         <Image
@@ -41,7 +43,6 @@ const DoctorProfile = () => {
 
                                 height: 250 * heightRef,
                                 width: 250 * heightRef,
-                                marginTop:50 * heightRef,
 
 
                             }}
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
         marginLeft: 15 * widthRef,
         fontWeight: "bold",
         fontSize: 24 * fontRef,
-        color: "#1877F2",
+        color: "black",
         margin: 14 * heightRef,
     },
     wr: {
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
     },
     t1: {
         fontSize: 22 * fontRef,
-        color: "#1877F2",
+        color: "black",
         fontWeight: "bold"
     },
     t2: {
@@ -306,7 +307,7 @@ const styles = StyleSheet.create({
     innerContainer: {
         backgroundColor: 'white',
         width: '100%',
-        height: '55%',
+        height: '52%',
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         justifyContent: "flex-start",

@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Dimensions, FlatList } from 'react-native';
 import { images } from "../../constants";
 import Icons from 'react-native-vector-icons/dist/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
 import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+import {useSocket} from "../context/SocketContext";
+import {requestCall} from "../services/socketService";
+import {mediaDevices, RTCView} from "react-native-webrtc";
 
 const Index1 = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Upcoming');
@@ -14,6 +17,80 @@ const Index1 = ({ navigation }) => {
   const [doctorData, setDoctorData] = useState(null);
   const [tokens, setTokens] = useState(null);
   const [loading, setLoading] = useState(false);
+  // console.log('doctor data ', doctorData)
+  const { state, dispatch } = useSocket();
+  const connectionRef = useRef();
+  const [stream, setStream] = useState(null);
+
+
+  console.log('Checking WebRTC support');
+  console.log('mediaDevices:', mediaDevices);
+
+  if (mediaDevices.getUserMedia) {
+    console.log('WebRTC getUserMedia is supported');
+    try {
+      const stream =  mediaDevices.getUserMedia({ video: true, audio: true });
+      console.log('Stream:', stream);
+    } catch (error) {
+      console.error('Error getting user media:', error);
+    }
+  } else {
+    console.error('WebRTC getUserMedia is not supported');
+  }
+  const startVideoCall = async () => {
+    try {
+      const videoConstraints = {
+        mandatory: {
+          minWidth: 640,
+          minHeight: 480,
+          minFrameRate: 30,
+        },
+        facingMode: 'user', // Use 'environment' for the rear camera
+      };
+
+      const mediaStream = await mediaDevices.getUserMedia({
+        video: videoConstraints,
+        audio: true,
+      });
+
+      // Check and log the video and audio tracks
+      const videoTracks = mediaStream.getVideoTracks();
+      const audioTracks = mediaStream.getAudioTracks();
+
+      console.log('Video Tracks:', videoTracks);
+      console.log('Audio Tracks:', audioTracks);
+
+      if (videoTracks.length > 0) {
+        console.log('Video Track ID:', videoTracks[0].id);
+      } else {
+        console.error('No video track available.');
+      }
+
+      if (audioTracks.length > 0) {
+        console.log('Audio Track ID:', audioTracks[0].id);
+      }
+
+      setStream(mediaStream);
+      dispatch({ type: 'SET_USER_STREAM', payload: mediaStream });
+
+      const doctorName = `${doctorData.firstName} ${doctorData.lastName}`;
+      const doctorProfileImg = doctorData.profileImg;
+
+      requestCall(
+          doctorName,
+          doctorProfileImg,
+          mediaStream,
+          setStream,
+          (accepted) => dispatch({ type: 'SET_CALL_ACCEPTED', payload: accepted }),
+          connectionRef,
+          setCallerImg,
+          setCallerName,
+          setIsUserVideoStreaming
+      );
+    } catch (error) {
+      console.error('Error starting video call:', error);
+    }
+  };
 
   useEffect(() => {
     const getDoctorData = async () => {
@@ -99,8 +176,8 @@ const Index1 = ({ navigation }) => {
   const renderUpcomingItem = ({ item }) => (
     <View style={styles.upcom}>
       <View style={styles.topBar}>
-      <Text style={styles.y1}>  {new Date(item.appointmentDetails.date * 1000).toLocaleDateString()}</Text>
-      <Text style={styles.y1}> {new Date(item.appointmentDetails.startTime * 1000).toLocaleTimeString()}</Text>
+      <Text style={styles.y1}>  {item.appointmentDetails.date }</Text>
+      <Text style={styles.y1}> {item.appointmentDetails.startTime}</Text>
       </View>
       <View style={styles.row}>
         <View style={styles.circular}>
@@ -116,13 +193,13 @@ const Index1 = ({ navigation }) => {
           <Text style={styles.gender}>Gender: {item?.user?.gender}</Text>
           <View style={{ flexDirection: "row", justifyContent: "flex-end", width: 150 }}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('video-call')}
-              style={styles.cameraButton}
+                onPress={startVideoCall}
+                style={styles.cameraButton}
             >
               <Image
-                source={images.Camera}
-                resizeMode="cover"
-                style={styles.cameraImage}
+                  source={images.Camera}
+                  resizeMode="cover"
+                  style={styles.cameraImage}
               />
             </TouchableOpacity>
           </View>
@@ -136,7 +213,7 @@ const Index1 = ({ navigation }) => {
       <View style={styles.r1}>
         <View style={styles.c1}>
           <Text style={{ fontSize: 20 * fontRef, fontWeight: "bold", color:'black' }}>{item?.user?.firstName} {item?.user?.lastName}</Text>
-          <Text style={{color:'dimgrey'}}>Cardiologist</Text>
+          <Text style={{fontSize: 16 * fontRef,color:'black', fontWeight:'500'}}>Cardiologist</Text>
         </View>
         <View style={styles.circle}>
           <Image
@@ -146,7 +223,7 @@ const Index1 = ({ navigation }) => {
           />
         </View>
       </View>
-      <Text style={{ color: "grey" }}>It was a successful completed appointment</Text>
+      <Text style={{ fontSize: 16 * fontRef,color:'black', fontWeight:'500', marginVertical:10, marginLeft:10}}>It was a successful completed appointment.</Text>
       <View style={styles.topBar}>
         <Text style={styles.y1}>  {new Date(item.appointmentDetails.date * 1000).toLocaleDateString()}</Text>
         <Text style={styles.y1}> {new Date(item.appointmentDetails.startTime * 1000).toLocaleTimeString()}</Text>
@@ -154,7 +231,7 @@ const Index1 = ({ navigation }) => {
     </View>
   );
 
-  console.log('pending ', JSON.stringify(pending,null,3))
+  // console.log('pending ', JSON.stringify(pending,null,3))
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.appBar}>
@@ -162,7 +239,7 @@ const Index1 = ({ navigation }) => {
           <TouchableOpacity onPress={() => navigation.goBack()} >
             <Icons name={'chevron-back'} size={30} color="black" />
           </TouchableOpacity>
-          <Text style={styles.h1}>My Schedule</Text>
+          <Text style={styles.h1}> My Schedule</Text>
         </View>
         {/*<View style={styles.circularBox}>*/}
         {/*  <Image*/}
@@ -207,6 +284,16 @@ const Index1 = ({ navigation }) => {
             keyExtractor={(item) => item._id.toString()}
             ListEmptyComponent={<Text>No completed appointments.</Text>}
           />
+        )}
+
+        {/* Render the video stream if available */}
+        {stream && (
+            <View style={styles.videoContainer}>
+              <RTCView
+                  streamURL={stream.toURL()}
+                  style={styles.rtcView}
+              />
+            </View>
         )}
       </View>
     </SafeAreaView>
@@ -308,13 +395,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   name: {
-    fontSize: 18 * fontRef,
+    fontSize: 22 * fontRef,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
 
   },
   disease: {
     color: 'white',
+    fontWeight:'bold'
   },
   gender: {
     fontWeight: 'bold',
@@ -329,8 +417,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1877F2',
+
   },
   cameraImage: {
+
     height: 20 * heightRef,
     width: 20 * heightRef
   },
@@ -357,5 +447,17 @@ const styles = StyleSheet.create({
   r1: {
     flexDirection: "row",
     justifyContent: 'space-between'
+  },
+  videoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    marginTop: 20 * heightRef,
+    height: 200 * heightRef,
+  },
+  rtcView: {
+    width: '100%',
+    height: '100%',
   },
 });

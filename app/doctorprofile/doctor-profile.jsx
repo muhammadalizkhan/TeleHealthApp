@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDoctorbyId } from "../../constants/APi";
 import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+import Iconss from "react-native-vector-icons/dist/Ionicons";
 
 const DoctorScreen = () => {
     const navigation = useNavigation();
@@ -137,6 +138,14 @@ const DoctorScreen = () => {
                         </ScrollView>
                     </View>
                 </View>
+                <TouchableOpacity style={{marginLeft:15, backgroundColor:'white',
+                    marginBottom:15, borderRadius:8, position:'absolute', top:20, left:10,
+                    padding:0, width:40, height:40, justifyContent:'center',
+                    alignItems:'center'}}
+                                  onPress={() => navigation.openDrawer()}>
+                    <Iconss name={'menu'} size={35} color={'#1877F2'}  />
+
+                </TouchableOpacity>
             </ScrollView>
 
             {/* <StatusBar backgroundColor="#161622" style="light" /> */}
@@ -184,7 +193,7 @@ const styles = StyleSheet.create({
         marginLeft: 15 * widthRef,
         fontWeight: "bold",
         fontSize: 24 * fontRef,
-        color: "#1877F2",
+        color: "black",
         margin: 14 * heightRef
     },
     wr: {
@@ -217,7 +226,7 @@ const styles = StyleSheet.create({
     },
     t1: {
         fontSize: 22 * fontRef,
-        color: "#1877F2",
+        color: "black",
         fontWeight: "bold"
     },
     t2: {

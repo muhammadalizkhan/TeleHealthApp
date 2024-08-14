@@ -117,12 +117,12 @@ const formatDate = (timestamp) => {
         }} />
 
       <View style={{width:'45%'}}>
-        <Text style={{ fontSize: 17 * fontRef, fontWeight: "bold", color: "#1877F2", marginTop: 10 * heightRef }}>
+        <Text style={{ fontSize: 19 * fontRef, fontWeight: "bold", color: "black", marginTop: 10 * heightRef }}>
           {`${item?.visits?.[0]?.doctor?.firstName || ''} ${item?.visits?.[0]?.doctor?.lastName || ''}`}
         </Text>
 
 
-        <Text style={{color:'black', fontSize: 13 * fontRef }}>{doctor?.speciality[0]?.specialization?.name}</Text>
+        <Text style={{color:'black', fontSize: 14 * fontRef }}>{doctor?.speciality[0]?.specialization?.name}</Text>
       </View>
 
       <View style={styles.lowcontain}>
@@ -135,7 +135,7 @@ const formatDate = (timestamp) => {
 );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex:1,backgroundColor:'white'}}>
       <View style={styles.appBar}>
         <View style={styles.appBarpatr1}>
           <TouchableOpacity onPress={() => navigation.goBack()} >
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     marginRight: 30,
     borderRadius: 20,
     borderWidth: 1, // border width
-    borderColor: 'grey', // border color
+    borderColor: "#DAD9D9", // border color
     marginTop: 10,
     flexDirection: "row"
 

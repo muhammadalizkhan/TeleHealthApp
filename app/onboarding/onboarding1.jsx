@@ -1,17 +1,47 @@
 
 // import { Redirect, router } from "expo-router";
-import { View, Text, Image, ScrollView,StyleSheet,TouchableOpacity } from "react-native";
+import {View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import { fontRef, heightRef, widthRef } from "../../constants/screenSize";
+import {useEffect, useState} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
 const Welcome = ({navigation}) => {
   // const { loading, isLogged } = useGlobalContext();
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    checkAsyncStorage();
+  }, []);
 
+  const checkAsyncStorage = async () => {
+    try {
+      const checkValue = await AsyncStorage.getItem('check');
+      console.log('Check value from AsyncStorage:', checkValue); // Debugging log
 
+      const isChecked = checkValue ? JSON.parse(checkValue) : false;
+      if (isChecked) {
+        console.log('Navigating to role-login'); // Debugging log
+        navigation.replace('role-login');
+      } else {
+        setLoading(false); // Hide loading indicator
+      }
+    } catch (error) {
+      console.error('Error reading check value from AsyncStorage:', error);
+      setLoading(false); // Hide loading indicator in case of error
+    }
+  };
+
+  if (loading) {
+    return (
+        <SafeAreaView style={styles.container}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView className="bg-primary h-full">
       {/* <Loader isLoading={loading} /> */}
