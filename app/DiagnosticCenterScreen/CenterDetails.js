@@ -93,22 +93,47 @@ const DiagnosticCenterDetail = ({ route }) => {
     };
     const renderItem = ({ item }) => (
         <View style={styles.labContainer}>
-            {
-                item.image ?
-                    (
-                        item.image.endsWith('.svg') ? (
-                            <SvgUri
-                                width="100%"
-                                height="40%"
-                                uri={item.image}
-                            />
-                        ) : (
-                            <Image source={{ uri: item.image }} style={styles.labImage} />
-                        )
-                    ) : (
-                        <Image source={images.Account} style={styles.labImage} />
-                    )
-            }
+            {item.image ? (
+                item.image.endsWith('.svg') ? (
+                    <SvgUri
+                        width="100%"
+                        height="40%"
+                        uri={item.image}
+                        style={styles.labImage} // Ensure this style exists
+                    />
+                ) : (
+                    <View
+                        style={{
+                            height: 130 * heightRef,
+                            width: '100%',
+                            backgroundColor: '#007BFF',
+                            marginBottom: 15 * heightRef,
+                            borderRadius: 10,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+
+                        }}
+                    >
+                    <Image source={{ uri: item.image }} style={{width:100 * heightRef, height:100 * heightRef,
+                    borderRadius:50 * heightRef}} resizeMode={'contain'} />
+                    </View>
+                )
+            ) : (
+                <View
+                    style={{
+                        height: 130 * heightRef,
+                        width: '100%',
+                        backgroundColor: '#007BFF',
+                        marginBottom: 15 * heightRef,
+                        borderRadius: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text style={{ fontSize: 14, color: 'white' }}>No image found!</Text>
+                    {/* <Image source={images.Account} style={styles.labImage} /> */}
+                </View>
+            )}
             <Text style={styles.title}>{item.testName}</Text>
             <View style={styles.infoItem}>
                 <Iconss name={'calendar-outline'} size={20 * fontRef} color={'#007BFF'} />
@@ -123,8 +148,8 @@ const DiagnosticCenterDetail = ({ route }) => {
                 <Text style={[styles.infoText,{fontSize: 20 * fontRef, fontWeight:'bold', color: 'black'}]}>Price ${item.price}</Text>
             </View>
 
-            <TouchableOpacity style={{width : '40%', alignSelf:'center'  ,
-                height:'16%', backgroundColor: '#007BFF', padding: 10,
+            <TouchableOpacity style={{width : '30%', alignSelf:'center'  ,
+                height:'13%', backgroundColor: '#007BFF', padding: 10,
                 borderRadius: 30, marginTop: 10, justifyContent:'center'  }} onPress={ ()=> handleBookTestPress(item)}>
 
                 <Text style={{color: 'white', textAlign: 'center', fontSize: 14 * fontRef , fontWeight:'bold'}}>Book Test</Text>
@@ -212,9 +237,13 @@ const DiagnosticCenterDetail = ({ route }) => {
 
                         <Pressable
                             style={[styles.buttonClose]}
-                            onPress={() => setModalVisible(false)}
+
+                            onPress={() => {
+                                setModalVisible(false);
+                                navigation.navigate('submitBooking', { data: selectedTest });
+                            }}
                         >
-                            <Text style={styles.textStyle}>Close</Text>
+                            <Text style={styles.textStyle}>Next</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -241,8 +270,8 @@ const styles = StyleSheet.create({
     },
     labContainer: {
         width: '100%',
-        height:380 * heightRef,
-        backgroundColor: '#F9F8F8',
+        height:350 * heightRef,
+        backgroundColor: 'white',
         justifyContent:'center',
         padding: 10 * widthRef,
         // backgroundColor:'red',

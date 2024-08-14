@@ -37,6 +37,8 @@ import DiagnosticCenterScreen from '../DiagnosticCenterScreen';
 import UpdateDScreen from '../UpdateDoctor';
 import StripeGateway from "../appointment/payments";
 import DiagnosticCenterDetail from "../DiagnosticCenterScreen/CenterDetails";
+import submitBooking from "../DiagnosticCenterScreen/SubmitBooking";
+import PrescriptionScreen from "../doctorprofile/patientRecord/AddPrescription";
 const Stack = createStackNavigator();
 
 function StackNavigator() {
@@ -77,6 +79,8 @@ function StackNavigator() {
         <Stack.Screen name="UpdateDScreen" component={UpdateDScreen}  options={{ headerShown: false }} />
         <Stack.Screen name="StripeGateway" component={StripeGateway}  options={{ headerShown: false }} />
         <Stack.Screen name="CenterDetail" component={DiagnosticCenterDetail} options={{ headerShown: false }} />
+        <Stack.Screen name="submitBooking" component={submitBooking} options={{ headerShown: false }} />
+        <Stack.Screen name="PrescriptionScreen" component={PrescriptionScreen} options={{ headerShown: false }} />
 
         {/*StripeGateway*/}
 

@@ -14,6 +14,49 @@ const PatientRecord = ({ navigation }) => {
   const [userRecords, setUserRecords] = useState(null);
   const [tokens, setTokens] = useState()
 
+  const dummyUserRecords = [
+    {
+      _id: '1',
+      user: {
+        firstName: 'John',
+        lastName: 'Doe',
+        gender: 'Male',
+        profileImg: 'https://via.placeholder.com/150',
+      },
+      condition: 'Hypertension',
+    },
+    {
+      _id: '2',
+      user: {
+        firstName: 'Jane',
+        lastName: 'Smith',
+        gender: 'Female',
+        profileImg: 'https://via.placeholder.com/150',
+      },
+      condition: 'Diabetes',
+    },
+    {
+      _id: '3',
+      user: {
+        firstName: 'Alice',
+        lastName: 'Johnson',
+        gender: 'Female',
+        profileImg: 'https://via.placeholder.com/150',
+      },
+      condition: 'Asthma',
+    },
+    {
+      _id: '4',
+      user: {
+        firstName: 'Bob',
+        lastName: 'Brown',
+        gender: 'Male',
+        profileImg: 'https://via.placeholder.com/150',
+      },
+      condition: 'COPD',
+    },
+  ];
+
   useEffect(() => {
     const getDoctorData = async () => {
       setLoading(true);
@@ -68,11 +111,23 @@ const PatientRecord = ({ navigation }) => {
       }
 
       const result = await response.json();
-      setUserRecords(result);
-      showMessage({
-        message: "Records fetched successfully",
-        type: 'success',
-      });
+      console.log('results ', result);
+
+      // Check if result contains the specific message "No record found"
+      if (result === "No record found") {
+        console.log('No records found.');
+        setUserRecords([]); // Set empty array if "No record found" message is received
+        showMessage({
+          message: "No records found.",
+          type: 'info',
+        });
+      } else {
+        setUserRecords(result);
+        showMessage({
+          message: "Records fetched successfully",
+          type: 'success',
+        });
+      }
     } catch (error) {
       console.error('Error fetching user records:', error);
       showMessage({
@@ -84,6 +139,7 @@ const PatientRecord = ({ navigation }) => {
     }
   };
 
+
   console.log('doctorData ', JSON.stringify(userRecords, null,2))
 
   const renderItem = ({ item }) => {
@@ -94,15 +150,18 @@ const PatientRecord = ({ navigation }) => {
             <Text style={styles.name}>
               {`${item?.user?.firstName || ''} ${item?.user?.lastName || ''}`}
             </Text>
-            <Text style={styles.disease}>Condition: {item.condition}</Text>
-            <Text style={styles.gender}>Gender: {item.user.gender}</Text>
+            <Text style={styles.disease}>Condition: <Text style={[styles.disease, {fontWeight: '400',  color: 'grey'}]}> {item.condition}</Text> </Text>
+            <Text style={styles.gender}>Gender: <Text style={[styles.gender, {
+              fontWeight: '400',  color: 'grey'
+            }]}>{item?.user?.gender}</Text></Text>
             <View style={styles.spacer}></View>
             <View style={styles.details}>
-              <Text style={{color:'grey', fontSize:12 * fontRef}}>Check Details!</Text>
+              <Text style={{color:'white', fontSize:14 * fontRef, fontWeight:'500'}}>Check Details!</Text>
             </View>
           </View>
           <Image
-            source={{ uri: item.user.profileImg }}
+            source={{ uri: item?.user?.profileImg }}
+            //   source={images.doctorPic}
             resizeMode="cover"
             style={styles.image}
           />
@@ -269,8 +328,9 @@ const styles = StyleSheet.create({
   },
   inner: {
     height: 150 * heightRef,
-    width: Dimensions.get('window').width - 40,
-    backgroundColor: '#F3F3F3',
+    width: '98%',
+    alignSelf:'center',
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 20 * heightRef,
     flexDirection: 'row',
@@ -279,6 +339,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     // Shadow for iOS
     shadowColor: '#000',
+    borderWidth:1,
+    borderColor:'#DAD9D9',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -286,25 +348,25 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   name: {
-    fontSize: 20 * fontRef,
+    fontSize: 22 * fontRef,
     fontWeight: 'bold',
-    color:'grey'
+    color:'black'
   },
   disease: {
-    color: 'blue',
+    color: 'black',
     fontWeight: 'bold',
     fontSize: 15 * fontRef,
   },
   gender: {
     fontWeight: 'bold',
-    color: 'grey',
+    color: 'black',
     fontSize : 15 * fontRef,
   },
 
   details: {
-    backgroundColor: 'white',
-    borderRadius: 5,
-    height: 20 * heightRef,
+    backgroundColor: '#007BFF',
+    borderRadius: 20,
+    height: 35 * heightRef,
     width: 100 * widthRef,
     justifyContent: 'center',
     alignItems: 'center',
@@ -312,5 +374,6 @@ const styles = StyleSheet.create({
   image: {
     height: 100 * heightRef,
     width: 100 * heightRef,
+    borderRadius:16
   },
 });

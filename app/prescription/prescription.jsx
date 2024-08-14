@@ -10,6 +10,7 @@ import PrescribedCenter from './component/prescribed-center';
 import { useRoute } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/dist/Ionicons';
 import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+import {SvgUri} from "react-native-svg";
 
 const Prescription = ({ navigation, }) => {
 
@@ -37,7 +38,7 @@ const Prescription = ({ navigation, }) => {
       <View style={styles.spacer} />
       <View style={{ padding: 20 }}>
 
-        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Medicines</Text>
+        <Text style={{ fontSize: 17, color: "black", fontWeight: "bold" }}>Medicines</Text>
         {data.medications && data.medications.map((med, index) => (
           <Text key={index} style={{ color: "grey", marginTop: 5 }}>{med.medication} ({med.dosage})</Text>
         ))}
@@ -51,20 +52,20 @@ const Prescription = ({ navigation, }) => {
 
         <View style={styles.spacer} /> */}
 
-        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Tests</Text>
+        <Text style={{ fontSize: 17, color: "black", fontWeight: "bold" }}>Tests</Text>
         {data.visits[0]?.recommendedTests?.labTest.map((test, index) => (
           <Text key={index} style={{ color: "grey", marginTop: 5 }}>{test.testName}</Text>
         ))}
 
         <View style={styles.spacer} />
 
-        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Note</Text>
+        <Text style={{ fontSize: 17, color: "black", fontWeight: "bold" }}>Note</Text>
         <Text style={{ color: "grey", marginTop: 5 }}>{data?.visits[0]?.notes}</Text>
 
 
         <View style={styles.spacer} />
 
-        <Text style={{ fontSize: 17, color: "#1877F2", fontWeight: "bold" }}>Recomended Lab</Text>
+        <Text style={{ fontSize: 17, color: "black", fontWeight: "bold" }}>Recomended Lab</Text>
 
 
         <View style={{ flexDirection: "row",  }}>
@@ -76,20 +77,28 @@ const Prescription = ({ navigation, }) => {
 
             <View style={styles.smallConatiner}>
 
-              <Image
-                source={images.firstAid}
-                resizeMode="cover"
+              {/*<Image*/}
+              {/*  source={{uri: data?.visits[0]?.recommendedTests?.diagnosticCenter?.image}}*/}
+              {/*  resizeMode="cover"*/}
 
-                style={{
-                  height: 80 * heightRef,
-                  width: 145 * heightRef,
-
-
-
-                }}
+              {/*  style={{*/}
+              {/*    height: 100 * heightRef,*/}
+              {/*    width: 145 * heightRef,*/}
 
 
-              />
+
+              {/*  }}*/}
+
+
+              {/*/>*/}
+              <View style={{height:80, width:'100%',justifyContent:'center', alignItems:'center' }}>
+                <SvgUri
+                    width='85%'
+                    height='50%'
+                    uri={data?.visits[0]?.recommendedTests?.diagnosticCenter?.image}
+                />
+              </View>
+
 
               <View style={styles.r1}>
 
@@ -232,16 +241,18 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   container: {
+    flex:1,
     // marginTop: 14,
     // padding: 20,
+    backgroundColor:'white',
     justifyContent: "flex-start",
   },
   r1: {
 
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 5
-
+    marginTop: 5,
+   paddingHorizontal:5
 
   },
 
@@ -249,20 +260,19 @@ const styles = StyleSheet.create({
   containerr: {
 marginTop:10,
     borderWidth: 1,
-    borderColor: "grey",
-    height: 180 * heightRef,
-    width: 155 * widthRef,
+   borderColor:"#DAD9D9",
+    height: 160 * heightRef,
+    width: 160 * heightRef,
     borderRadius: 20,
-    justifyContent: "flex-start",
-    alignItems: "center"
+    alignItems: "center",
+
   },
 
   smallConatiner: {
     marginTop: 5,
-
-
-    height: 110,
-    width: 145,
+    // backgroundColor:'white',
+    height: 110 * heightRef,
+    width: 145 * widthRef,
     borderRadius: 20
 
 

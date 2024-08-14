@@ -10,20 +10,18 @@ import { getCategories } from "../../constants/APi";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+import {Calendar} from "react-native-calendars";
 
 
 const ScheduleAappointmnet = ({ navigation }) => {
 
-
     const durations = [
-        { id: '1', duration: 15 },
-        { id: '2', duration: 30 },
-        { id: '3', duration: 45 },
-        { id: '4', duration: 60 }
+        { id: '1', duration: 30 },
     ];
+
     const route = useRoute();
     const { data } = route.params;
-    console.log('data ', JSON.stringify(data, null, 2))
+    console.log('data ', JSON.stringify(data, null,2))
     const [expanded, setExpanded] = useState(false);
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState('12/12/2023');
@@ -33,54 +31,74 @@ const ScheduleAappointmnet = ({ navigation }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenD, setIsOpenD] = useState(false);
     const [selectedCat, setSelectedCat] = useState(null);
-    const [selectDur, setSelectDur] = useState(durations[0])
-    // Initially no category selected
-    const [startDate, setStartDate] = useState(null);
+    const [selectDur, setSelectDur] = useState(durations[0]);
+    const [startDate, setStartDate] =  useState(new Date().toISOString().split('T')[0]);
+    const [availability, setAvailability] = useState('');
+
+    console.log('start date ', startDate)
     const [startDateObj, setStartDateObj] = useState(new Date());
     const [startDatePicker, setStartDatePicker] = useState(false);
     const [endDate, setEndDate] = useState(null);
+    const [isOpenC, setIsOpenC] = useState(false);
+   const [selectedCatC, setSelectedCatC] = useState(null);
+  const [isOpenT, setIsOpenT] = useState(false)
+    const [timeSlots, setTimeSlots] = useState([]);
 
-    console.log('selected cat ' , selectedCat)
-    console.log('startDate', startDate)
-    // Function to handle category selection
+    const currentDateTime = new Date();
+   console.log('selectedCatC ',selectedCatC)
+
+    useEffect(() => {
+        // Initial setting of categories based on selected type
+        filterCategories(selectedType);
+    }, [selectedType]);
+
+    useEffect(() => {
+        if (startDate) {
+            calculateEndDate(startDate, selectDur.duration);
+        }
+    }, [startDate]);
+
+    const filterCategories = (type) => {
+        if (!data || !data.speciality[0] || !data.speciality[0].subSpecializations) return;
+
+        const eligibility = type === 'In Person' ? 'physical' : 'virtual';
+        const filteredCat = data.speciality[0].subSpecializations.filter(sub => sub.eligibility === eligibility);
+        setCat(filteredCat);
+    };
+
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
+    };
+
+    const toggleDropdownC = () => {
+        setIsOpenC(!isOpenC);
     };
 
     const toggleDuration = () => {
         setIsOpenD(!isOpenD);
     };
 
-    useEffect(() => {
-        setCat(data?.speciality[0]?.subSpecializations);
-        console.log('cat ', selectedCat);
-        if (selectedCat?.eligibility === 'virtual') {
-            setSelectedType('Online'); // Set default type to Online for virtual eligibility
-        }
-        else {
-            setSelectedType('In Person'); // Set default type to In Person for physical eligibility
-        }
-        setSelectDur(selectedCat?.billingPlans[0]?.duration);
-    }, [selectedCat]);
-
-    useEffect(() => {
-        if (startDate ) {
-            calculateEndDate(startDate, selectDur);
-
-        }
-    }, [startDate]);
-
+    const toggleDurationT = () => {
+        setIsOpenT(!isOpenT);
+    };
 
     const handleCategorySelect = (category) => {
         setSelectedCat(category);
-        setIsOpen(false); // Close dropdown after selection
+        setIsOpen(false);
+    };
+
+    const handleCategorySelectC = (category) => {
+        setSelectedCatC(category);
+        setIsOpenC(false);
     };
 
     const handledurationSelect = (duration) => {
         setSelectDur(duration);
-        setIsOpenD(false); // Close dropdown after selection
-        calculateEndDate(startDate, duration.duration); // Calculate end date when duration is selected
+        setIsOpenD(false);
+        calculateEndDate(startDate, duration.duration);
     };
+
+
 
     const calculateEndDate = (start, duration) => {
         if (start && duration) {
@@ -91,24 +109,72 @@ const ScheduleAappointmnet = ({ navigation }) => {
         }
     };
 
-    const handleDate = (propDate) => {
-        setOpen(propDate);
-    };
-
     const handleCalendarPress = () => {
-        setStartDatePicker(!startDatePicker)
-    };
-
-    const toggleDescription = () => {
-        setExpanded(!expanded);
+        setStartDatePicker(!startDatePicker);
     };
 
     const handleTypeSelect = (type) => {
         setSelectedType(type);
+        setSelectedCat(null);
+        setSelectedCatC(null)// Reset the selected category
+        filterCategories(type);  // Update the cat list based on the selected type
     };
 
-    const handleTimeSelect = (time) => {
-        setSelectedTime(time);
+    const formatTime = (date) => {
+        let hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+        return `${hours}:${strMinutes} ${ampm}`;
+    };
+
+    // Generate time slots
+    const generateTimeSlots = (start, end, interval) => {
+        const timeSlots = [];
+        let currentTime = start;
+
+        while (currentTime < end) {
+            const nextTime = new Date(currentTime.getTime() + interval * 60000);
+            const slot = `${formatTime(currentTime)} - ${formatTime(nextTime)}`;
+            timeSlots.push(slot);
+            currentTime = nextTime;
+        }
+
+        return timeSlots;
+    };
+
+    // const timeSlots = generateTimeSlots(new Date(0, 0, 0, 8, 0), new Date(0, 0, 0, 20, 0), 30); // Generates 30-minute intervals
+
+    useEffect(() => {
+        const now = new Date();
+        const selectedDate = new Date(startDate);
+
+        let startTime;
+
+        // Check if the selected date is today or a future date
+        if (selectedDate.toDateString() === now.toDateString()) {
+            // Start from the current time if the selected date is today
+            startTime = now;
+        } else {
+            // Start from the beginning of the day if the selected date is a future date
+            startTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 8, 0);
+        }
+
+        // Set the end time for 8 PM
+        const endTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 20, 0);
+
+        // Generate time slots
+        const slots = generateTimeSlots(startTime, endTime, 30);
+        setTimeSlots(slots);
+        setAvailability(' ')
+    }, [startDate]);
+
+    const handleAvailabilitySelect = (slot) => {
+        setSelectDur({ duration: slot });
+        setAvailability(slot);
+        setIsOpenT(false);
     };
 
     const renderTypeButton = (type) => (
@@ -127,20 +193,30 @@ const ScheduleAappointmnet = ({ navigation }) => {
         </TouchableOpacity>
     );
 
-      // Function to handle booking the appointment
-      const handleBookAppointment = () => {
-        const appointmentDetails = {
-            doctor: data,
-            startDate,
-            endDate,
-            type: selectedType,
-            category: selectedCat,
-            duration: selectDur.duration,
-        };
+    const handleBookAppointment = () => {
+        // Ensure the duration is correctly set
+        if (selectDur.duration && typeof selectDur.duration === 'string' && selectDur.duration.includes(' - ')) {
+            // Split the selected duration into 'from' and 'to' times
+            const [fromTime, toTime] = selectDur.duration.split(' - ');
 
-        navigation.navigate('confirm-appointment', {
-            appointmentDetails: appointmentDetails
-        });
+            const appointmentDetails = {
+                doctor: data,
+                startDate,
+                endDate,
+                type: selectedType,
+                category: selectedCat,
+                duration: selectDur.duration,  // Full slot duration
+                fromTime,  // Extracted 'from' time
+                toTime,    // Extracted 'to' time
+            };
+
+            navigation.navigate('confirm-appointment', {
+                appointmentDetails: appointmentDetails
+            });
+        } else {
+            // Handle the case where selectDur.duration is not defined or not a valid string
+            console.error('Duration is not defined or is not in the correct format');
+        }
     };
 
 
@@ -161,7 +237,7 @@ const ScheduleAappointmnet = ({ navigation }) => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
+            <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 160 }}
                 showsVerticalScrollIndicator>
 
                 <View style={styles.container}>
@@ -181,35 +257,7 @@ const ScheduleAappointmnet = ({ navigation }) => {
                             <Text style={styles.h12}>{data.firstName} {data.lastName}</Text>
                             <Text style={styles.h2}>{data.speciality[0].specialization.name}</Text>
                         </View>
-                        <View style={styles.wrapr}>
-                            <Text style={styles.h1}>Disease</Text>
-                        </View>
-                        <View style={styles.spacer}></View>
-                        <View style={styles.wraprC}>
-                            <TouchableOpacity style={styles.buttons} onPress={toggleDropdown}>
-                                <Text style={{color:'black'}}>{selectedCat?.name || 'Select Category'}</Text>
-                                <Icons name={isOpen ? 'chevron-up' : 'chevron-down'} size={24} color="black" />
-                            </TouchableOpacity>
-                            {isOpen && (
-                                <View style={styles.dropdown}>
-                                    <FlatList
-                                        nestedScrollEnabled={true}
-                                        data={cat}
-                                        style={{ flex: 1, maxHeight: 250 }}
-                                        renderItem={({ item: category }) => (
-                                            <TouchableOpacity
-                                                key={category._id} // Ensure unique key
-                                                style={styles.dropdownItem}
-                                                onPress={() => handleCategorySelect(category)}
-                                            >
-                                                <Text style={{color:'black'}}>{category.name}</Text>
-                                            </TouchableOpacity>
-                                        )}
-                                        keyExtractor={item => item._id}
-                                    />
-                                </View>
-                            )}
-                        </View>
+
                         <View style={styles.spacer}></View>
                         <View style={styles.wrapr}>
                             <Text style={styles.h1}>Type</Text>
@@ -218,36 +266,120 @@ const ScheduleAappointmnet = ({ navigation }) => {
                             {renderTypeButton('In Person')}
                             {renderTypeButton('Online')}
                         </View>
-
                         <View style={styles.wrapr}>
-                            <Text style={styles.h1}>From</Text>
+                            <Text style={styles.h1}>Disease</Text>
+                        </View>
+                        <View style={styles.spacer}></View>
+                        <View style={styles.wraprC}>
+                            <TouchableOpacity style={styles.buttons} onPress={toggleDropdownC}>
+                                <Text style={{color:'black'}}>{selectedCatC?.specialization?.name || 'Category'}</Text>
+                                <Icons name={isOpenC ? 'chevron-up' : 'chevron-down'} size={24} color="black" />
+                            </TouchableOpacity>
+
+                            {isOpenC && (
+                                <View style={styles.dropdown}>
+                                    {data?.speciality?.length === 0 ? (
+                                        <Text style={{ color: 'black', padding: 15 }}>No categories available</Text>
+                                    ) : (
+                                        <FlatList
+                                            nestedScrollEnabled={true}
+                                            data={data.speciality}
+                                            style={{ flex: 1, maxHeight: 250 }}
+                                            renderItem={({ item: category }) => (
+                                                <TouchableOpacity
+                                                    key={category._id}
+                                                    style={styles.dropdownItem}
+                                                    onPress={() => handleCategorySelectC(category)}
+                                                >
+                                                    <Text style={{ color: 'black' }}>{category.specialization.name}</Text>
+                                                </TouchableOpacity>
+                                            )}
+                                            keyExtractor={item => item._id}
+                                        />
+                                    )}
+                                </View>
+                            )}
+                        </View>
+                        <View style={styles.spacer}></View>
+                        <View style={styles.wraprC}>
+                            <TouchableOpacity style={styles.buttons} onPress={toggleDropdown}>
+                                <Text style={{color:'black'}}>{selectedCat?.name || 'Sub Categories'}</Text>
+                                <Icons name={isOpen ? 'chevron-up' : 'chevron-down'} size={24} color="black" />
+                            </TouchableOpacity>
+                            {isOpen && (
+                                <View style={styles.dropdown}>
+                                    {cat.length === 0 ? (
+                                        <Text style={{ color: 'black', padding: 15 }}>No categories available</Text>
+                                    ) : (
+                                        <FlatList
+                                            nestedScrollEnabled={true}
+                                            data={cat}
+                                            style={{ flex: 1, maxHeight: 250 }}
+                                            renderItem={({ item: category }) => (
+                                                <TouchableOpacity
+                                                    key={category._id}
+                                                    style={styles.dropdownItem}
+                                                    onPress={() => handleCategorySelect(category)}
+                                                >
+                                                    <Text style={{ color: 'black' }}>{category.name}</Text>
+                                                </TouchableOpacity>
+                                            )}
+                                            keyExtractor={item => item._id}
+                                        />
+                                    )}
+                                </View>
+                            )}
+                        </View>
+                        <View style={styles.wrapr}>
+                            <Text style={styles.h1}>Select date</Text>
                         </View>
 
-                        <View style={styles.spacer}></View>
+                        {/*<TouchableOpacity onPress={handleCalendarPress}>*/}
+                        {/*    <View style={styles.calender}>*/}
+                        {/*        <Text style={{ color: "white", fontWeight: "bold" }}>{startDate || 'choose date'}</Text>*/}
+                        {/*    </View>*/}
+                        {/*</TouchableOpacity>*/}
+
+
+                        {/*<DateTimePickerModal*/}
+                        {/*    isVisible={startDatePicker}*/}
+                        {/*    mode="datetime"*/}
+                        {/*    date={startDate ? moment(startDate, "DD-MM-YYYY hh:mm A").toDate() : new Date()}*/}
+                        {/*    minimumDate={currentDateTime}*/}
+                        {/*    onConfirm={(date) => {*/}
+                        {/*        const formattedDate = moment(date).format("DD-MM-YYYY hh:mm A");*/}
+                        {/*        console.log("start date", formattedDate);*/}
+                        {/*        setStartDate(formattedDate);*/}
+                        {/*        setStartDatePicker(false);*/}
+                        {/*    }}*/}
+                        {/*    onCancel={() => {*/}
+                        {/*        setStartDatePicker(false);*/}
+                        {/*    }}*/}
+                        {/*    is24Hour={false}*/}
+                        {/*/>*/}
                         <TouchableOpacity onPress={handleCalendarPress}>
                             <View style={styles.calender}>
-                                <Text style={{ color: "white", fontWeight: "bold" }}>{startDate || 'choose date'}</Text>
+                                <Text style={{ color: "white", fontWeight: "bold" }}>
+                                    {startDate ? moment(startDate).format("DD-MM-YYYY") : 'choose date'}
+                                </Text>
                             </View>
                         </TouchableOpacity>
 
-
-                        <DateTimePickerModal
-                            isVisible={startDatePicker}
-                            mode="datetime"
-                            date={startDate ? moment(startDate, "DD-MM-YYYY hh:mm A").toDate() : new Date()}
-                            onConfirm={(date) => {
-                                const formattedDate = moment(date).format("DD-MM-YYYY hh:mm A");
-                                console.log("start date", formattedDate);
-                                setStartDate(formattedDate);
-                                setStartDatePicker(false);
-                            }}
-                            onCancel={() => {
-                                setStartDatePicker(false);
-                            }}
-                            is24Hour={false}
-                        // backgroundColor={'#2280D8'}
-                        />
-
+                        {/*{startDatePicker && (*/}
+                        {/*    <View style={{ width: '100%' }}>*/}
+                        {/*        <Calendar*/}
+                        {/*            current={startDate}*/}
+                        {/*            minDate={moment().format('YYYY-MM-DD')}*/}
+                        {/*            markedDates={{*/}
+                        {/*                [startDate]: { selected: true, selectedColor: '#007BFF' },*/}
+                        {/*            }}*/}
+                        {/*            onDayPress={(day) => {*/}
+                        {/*                setStartDate(day.dateString); // Store original date*/}
+                        {/*                setStartDatePicker(false);*/}
+                        {/*            }}*/}
+                        {/*        />*/}
+                        {/*    </View>*/}
+                        {/*)}*/}
                         <View style={styles.wrapr}>
                             <Text style={styles.h1}>Duration</Text>
                         </View>
@@ -258,17 +390,57 @@ const ScheduleAappointmnet = ({ navigation }) => {
                             </View>
                         </View> */}
                         <TouchableOpacity style={styles.buttons} onPress={toggleDuration}>
-                            <Text style={{color:'black'}}>{selectDur + ' mints' || 'Select Duration'}</Text>
+                            <Text style={{color:'black'}}>{selectDur.duration + ' mints' || 'Select Duration'}</Text>
                             <Icons name={isOpen ? 'chevron-up' : 'chevron-down'} size={24} color="black" />
                         </TouchableOpacity>
+                        {isOpenD && (
+                            <View style={styles.dropdownD}>
+                                <FlatList
+                                    nestedScrollEnabled={true}
+                                    data={durations}
+                                    style={{ flex: 1, maxHeight: 250 }}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity
+                                            key={item.id}
+                                            style={styles.dropdownItem}
+                                            onPress={() => handledurationSelect(item)}
+                                        >
+                                            <Text style={{ color: 'black' }}>{item.duration} minutes</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                    keyExtractor={item => item.id}
+                                />
+                            </View>
+                        )}
 
-                    <View style={styles.wrapr}>
-                            <Text style={styles.h1}>To</Text>
+                        <View style={styles.wrapr}>
+                            <Text style={styles.h1}>Select time</Text>
                         </View>
 
-                          <View style={styles.calender}>
-                                <Text style={{ color: "white", fontWeight: "bold" }}>{endDate? endDate : 'Choose Date'}</Text>
+                        <TouchableOpacity style={styles.buttons} onPress={toggleDurationT}>
+                            <Text style={{color:'black'}}>{availability || "Please add your availability"}</Text>
+                            <Icons name={isOpen ? 'chevron-up' : 'chevron-down'} size={24} color="black" />
+                        </TouchableOpacity>
+                        {isOpenT && (
+                            <View style={styles.dropdownD}>
+                                {timeSlots.map((slot, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.dropdownItem}
+                                        onPress={() => handleAvailabilitySelect(slot)}
+                                    >
+                                        <Text style={styles.dropdownItemText}>{slot}</Text>
+                                    </TouchableOpacity>
+                                ))}
                             </View>
+                        )}
+                    {/*<View style={styles.wrapr}>*/}
+                    {/*        <Text style={styles.h1}>To</Text>*/}
+                    {/*    </View>*/}
+
+                    {/*      <View style={styles.calender}>*/}
+                    {/*            <Text style={{ color: "white", fontWeight: "bold" }}>{endDate? endDate : 'Choose Date'}</Text>*/}
+                    {/*        </View>*/}
 
                         {/* <View style={styles.wrapr}>
                             <Text style={styles.h1}>{endDate}</Text>
@@ -278,7 +450,7 @@ const ScheduleAappointmnet = ({ navigation }) => {
                             // onCheckout
                             () =>handleBookAppointment()
                         }>
-                            <View style={styles.calender}>
+                            <View style={[styles.calender,{marginBottom: 30}]}>
                                 <Text style={{ color: "white", fontWeight: "bold", fontSize: 16 }}>Book Appointment</Text>
                             </View>
                         </TouchableOpacity>
@@ -286,7 +458,7 @@ const ScheduleAappointmnet = ({ navigation }) => {
 
                     <View style={{
                         position: 'absolute', width: '100%', height: 70 * heightRef,
-                        top: 0, paddingHorizontal: 15, paddingVertical: 8,
+                        top: 10, paddingHorizontal: 15, paddingVertical: 8,
                         flexDirection: 'row', marginTop: 0
                     }}>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -299,6 +471,37 @@ const ScheduleAappointmnet = ({ navigation }) => {
                         }}>Appoinment</Text>
                     </View>
                 </View>
+
+                {/* Modal to open the Calendar */}
+                <Modal
+                    transparent={true}
+                    visible={startDatePicker}
+                    animationType='fade'
+                    onRequestClose={() => setStartDatePicker(false)} // Close modal on back button press (Android)
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.calendarContainer}>
+                            {/* Close Button */}
+                            <TouchableOpacity
+                                style={styles.closeButton}
+                                onPress={() => setStartDatePicker(false)}
+                            >
+                                <Icons name="close" size={20} color="white" />
+                            </TouchableOpacity>
+                            <Calendar
+                                current={startDate}
+                                minDate={moment().format('YYYY-MM-DD')}
+                                markedDates={{
+                                    [startDate]: { selected: true, selectedColor: '#007BFF' },
+                                }}
+                                onDayPress={(day) => {
+                                    setStartDate(day.dateString); // Store original date
+                                    setStartDatePicker(false);    // Close the modal after selecting a date
+                                }}
+                            />
+                        </View>
+                    </View>
+                </Modal>
                 {/* <StatusBar backgroundColor="#161622" style="light" /> */}
             </ScrollView>
 
@@ -349,6 +552,32 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 20 * widthRef,
     },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    },
+    calendarContainer: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '90%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    closeButton: {
+        backgroundColor:'red',
+        position: 'absolute',
+        top: 10,
+        borderRadius:20,
+        right: 10,
+        padding:2,
+        zIndex: 10, // Ensure the close button is above the calendar
+    },
     avatar: {
         position: 'absolute',
         backgroundColor: 'white',
@@ -364,6 +593,10 @@ const styles = StyleSheet.create({
     imageStyle: {
         width: '100%',
         height: '100%',
+    },
+    dropdownItemText: {
+        fontSize: 16 * fontRef,
+        color: 'black',
     },
     calender: {
         width: Dimensions.get("window").width - 40,
@@ -418,7 +651,10 @@ const styles = StyleSheet.create({
         marginLeft: 10 * widthRef
     },
     selectedButton: {
-        backgroundColor: "#2280D8",
+        borderColor: "#2280D8",
+        borderWidth:1,
+        backgroundColor: "#2280D8",  // light blue color
+
     },
     selectedTimeButton: {
         backgroundColor: "#2280D8",  // light blue color

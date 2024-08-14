@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Dimensions, FlatList } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Dimensions, FlatList, Alert } from 'react-native';
 import { images } from "../../constants";
 import CompleteSchedule from '../../components/completed-schedule';
 import CancelledSchedule from '../../components/cancelled-schedule';
@@ -10,7 +10,8 @@ import Icons from 'react-native-vector-icons/dist/Ionicons';
 import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
 
 const Index = ({navigation}) => {
-  const [activeTab, setActiveTab] = useState('Upcoming');
+  {/* Edited by Yaseen */}
+  const [activeTab, setActiveTab] = useState('Pending');
   const [loading, setLoading] = useState(false)
   const [userRecords, setUserRecords] = useState([])
   const { logout, loggedIn, userData } = useContext(AuthContext);
@@ -22,7 +23,8 @@ const Index = ({navigation}) => {
     getUserRecords();
   }, []);
 
- useEffect(() => {
+  useEffect(() => {
+
     if (Array.isArray(userRecords)) {
       const completeAppointments = [];
       const pendingAppointments = [];
@@ -43,7 +45,7 @@ const Index = ({navigation}) => {
   console.log('pending app = ', pending);
   console.log('completed app = ', complete)
 
-   const url = `https://api-dev.mhc.doginfo.click/doctor/appointment?userId=${userData.user._id}`;
+  const url = `https://api-dev.mhc.doginfo.click/doctor/appointment?userId=${userData.user._id}`;
   // const url = `https://api-dev.mhc.doginfo.click/doctor/appointment?userId=666360d5d7079cd2796a343b`;
 
 
@@ -98,139 +100,142 @@ const Index = ({navigation}) => {
   };
 
   const renderCompleteAppointment = ({ item }) => (
-    <View style={styles.maininner}>
-      <View style={styles.r1}>
-        <View style={styles.c1}>
-          <Text style={{ fontSize: 20 * fontRef, fontWeight: "bold", color:'black' }}>
-            Dr. {item.doctor.firstName} {item.doctor.lastName}
+      <View style={styles.maininner}>
+        <View style={styles.r1}>
+          <View style={styles.c1}>
+            <Text style={{ fontSize: 20 * fontRef, fontWeight: "bold", color:'black' }}>
+              Dr. {item.doctor.firstName} {item.doctor.lastName}
+            </Text>
+            <Text style={{fontSize:14 * fontRef, color:'gray'}}>{item.specialization.name}</Text>
+          </View>
+          <View style={styles.circle}>
+            <Image
+                source={images.Check}
+                resizeMode="cover"
+                style={{
+                  height: 50 * heightRef,
+                  width: 50 * heightRef,
+                }}
+            />
+          </View>
+        </View>
+        <Text style={{ color: "grey" }}>It was a successfully completed appointment</Text>
+        <View style={styles.topBar}>
+          <Text style={styles.y1}>
+            {new Date(item.appointmentDetails.date * 1000).toLocaleDateString()}
           </Text>
-          <Text style={{fontSize:14 * fontRef, color:'gray'}}>{item.specialization.name}</Text>
-        </View>
-        <View style={styles.circle}>
-          <Image
-            source={images.Check}
-            resizeMode="cover"
-            style={{
-              height: 50 * heightRef,
-              width: 50 * heightRef,
-            }}
-          />
+          <Text style={styles.y1}>
+            {new Date(item.appointmentDetails.startTime * 1000).toLocaleTimeString()}
+          </Text>
         </View>
       </View>
-      <Text style={{ color: "grey" }}>It was a successfully completed appointment</Text>
-      <View style={styles.topBar}>
-        <Text style={styles.y1}>
-          {new Date(item.appointmentDetails.date * 1000).toLocaleDateString()}
-        </Text>
-        <Text style={styles.y1}>
-          {new Date(item.appointmentDetails.startTime * 1000).toLocaleTimeString()}
-        </Text>
-      </View>
-    </View>
   );
 
   const renderPendingAppointment = ({ item }) => (
-    <View style={styles.mainin}>
-      <View style={styles.topBar}>
-        <Text style={styles.y1}>
-          {new Date(item.appointmentDetails.date * 1000).toLocaleDateString()}
-        </Text>
-        <Text style={styles.y1}>
-          {new Date(item.appointmentDetails.startTime * 1000).toLocaleTimeString()}
-        </Text>
-      </View>
-      <View style={styles.row}>
-        <View style={styles.circular}>
-          <Image
-            source={images.doctorPic} // Adjust the image source as necessary
-            resizeMode="cover"
-            style={{
-              height: 100,
-              width: 100,
-              borderRadius: 50,
-              overflow: 'hidden',
-            }}
-          />
-        </View>
-        <View style={styles.c1}>
-          <Text style={{ color: "white", fontWeight: 'bold', fontSize: 18 }}>
-            Dr. {item.doctor.firstName} {item.doctor.lastName}
+      <View style={styles.mainin}>
+        <View style={styles.topBar}>
+          <Text style={styles.y1}>
+            {item.appointmentDetails.date}
           </Text>
-          <Text style={{ color: "white" }}>{item.specialization.name}</Text>
-          <Text style={{ color: "white" }}>Duration: {Math.round((item.appointmentDetails.endTime - item.appointmentDetails.startTime) / 60)} min</Text>
+          <Text style={styles.y1}>
+            {item.appointmentDetails.startTime}
+          </Text>
+        </View>
+        <View style={styles.row}>
+          <View style={styles.circular}>
+            <Image
+                source={images.doctorPic} // Adjust the image source as necessary
+                resizeMode="cover"
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 50,
+                  overflow: 'hidden',
+                }}
+            />
+          </View>
+          <View style={styles.c1}>
+            <Text style={{ color: "white", fontWeight: 'bold', fontSize: 18 }}>
+              Dr. {item.doctor.firstName} {item.doctor.lastName}
+            </Text>
+            <Text style={{ color: "white" }}>{item.specialization.name}</Text>
+            <Text style={{ color: "white" }}>Duration: {Math.round((item.appointmentDetails.endTime - item.appointmentDetails.startTime) / 60)} min</Text>
+          </View>
         </View>
       </View>
-    </View>
   );
 
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.appBar}>
-        <View style={styles.appBarpatr1}>
-        <TouchableOpacity onPress={() => navigation.goBack()} >
-            <Icons name={'chevron-back'} size={30} color="black" />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.appBar}>
+          <View style={styles.appBarpatr1}>
+            <TouchableOpacity onPress={() => navigation.goBack()} >
+              <Icons name={'chevron-back'} size={30} color="black" />
 
-          </TouchableOpacity>
-          <Text style={styles.h1}>My Schedule</Text>
+            </TouchableOpacity>
+            <Text style={styles.h1}>My Schedule</Text>
+          </View>
+          {/*<View style={styles.circularBox}>*/}
+          {/*  <Image*/}
+          {/*    source={images.profilePic}*/}
+          {/*    resizeMode="contain"*/}
+          {/*    style={{ height: 50, width: 50 }}*/}
+          {/*  />*/}
+          {/*</View>*/}
         </View>
-        {/*<View style={styles.circularBox}>*/}
-        {/*  <Image*/}
-        {/*    source={images.profilePic}*/}
-        {/*    resizeMode="contain"*/}
-        {/*    style={{ height: 50, width: 50 }}*/}
-        {/*  />*/}
-        {/*</View>*/}
-      </View>
 
-      <View style={{padding:20}}>
+        <View style={{padding:20}}>
 
-        <View style={styles.spacer} />
-        <View style={styles.tabbar}>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'Upcoming' && styles.activeTab]}
-            onPress={() => handleTabPress('Upcoming')}
-          >
-            <Text style={[styles.tabText, activeTab === 'Upcoming' && styles.activeTabText]}>Upcoming</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'Completed' && styles.activeTab]}
-            onPress={() => handleTabPress('Completed')}
-          >
-            <Text style={[styles.tabText, activeTab === 'Completed' && styles.activeTabText]}>Completed</Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity
+          <View style={styles.spacer} />
+          <View style={styles.tabbar}>
+            {/* Edited by Yaseen */}
+            <TouchableOpacity
+                style={[styles.tab, activeTab === 'Pending' && styles.activeTab]}
+                onPress={() => handleTabPress('Pending')}
+            >
+              {/* Edited by Yaseen */}
+              <Text style={[styles.tabText, activeTab === 'Pending' && styles.activeTabText]}>Pending</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.tab, activeTab === 'Completed' && styles.activeTab]}
+                onPress={() => handleTabPress('Completed')}
+            >
+              <Text style={[styles.tabText, activeTab === 'Completed' && styles.activeTabText]}>Completed</Text>
+            </TouchableOpacity>
+            {/* <TouchableOpacity
             style={[styles.tab, activeTab === 'Cancelled' && styles.activeTab]}
             onPress={() => handleTabPress('Cancelled')}
           >
             <Text style={[styles.tabText, activeTab === 'Cancelled' && styles.activeTabText]}>Cancelled</Text>
           </TouchableOpacity> */}
+          </View>
+          {complete.length === 0 && pending.length === 0 ? (
+              <Text style={styles.noRecordText}>No record found</Text>
+          ) : (
+              <>
+                {activeTab === 'Completed' && (
+                    <FlatList
+                        data={complete}
+                        renderItem={renderCompleteAppointment}
+                        keyExtractor={(item, index) => item._id + index}
+                    />
+                )}
+                {/* Edited by Yaseen */}
+                {activeTab === 'Pending' && (
+                    <FlatList
+                        data={pending}
+                        renderItem={renderPendingAppointment}
+                        keyExtractor={(item, index) => item._id + index}
+                    />
+                )}
+              </>
+          )}
+          {/* {activeTab === 'Cancelled' && <CancelledSchedule />} */}
         </View>
-        {complete.length === 0 && pending.length === 0 ? (
-        <Text style={styles.noRecordText}>No record found</Text>
-      ) : (
-        <>
-          {activeTab === 'Completed' && (
-            <FlatList
-              data={complete}
-              renderItem={renderCompleteAppointment}
-              keyExtractor={(item, index) => item._id + index}
-            />
-          )}
-          {activeTab === 'Pending' && (
-            <FlatList
-              data={pending}
-              renderItem={renderPendingAppointment}
-              keyExtractor={(item, index) => item._id + index}
-            />
-          )}
-        </>
-      )}
-        {/* {activeTab === 'Cancelled' && <CancelledSchedule />} */}
-      </View>
 
-    </SafeAreaView>
+      </SafeAreaView>
   );
 };
 
@@ -297,7 +302,7 @@ const styles = StyleSheet.create({
   },
   y1: {
 
-    color: "black",
+    color: "white",
     fontWeight: "bold"
 
 
@@ -343,12 +348,6 @@ const styles = StyleSheet.create({
 
   },
 
-  c1: {
-
-    justifyContent: 'flex-start',
-
-
-  },
 
 
   maininner: {
@@ -376,18 +375,18 @@ const styles = StyleSheet.create({
     marginLeft:15 * widthRef
 
 
-},
+  },
 
 
-row:{
+  row:{
 
 
     flexDirection:"row"
 
-},
+  },
 
 
-circular:{
+  circular:{
 
     height:100,
     width:100,
@@ -395,47 +394,36 @@ circular:{
     marginTop:10,
 
 
-},
+  },
 
 
 
 
 
-topBar:{
-    backgroundColor: "rgba(218, 217, 217, 0.5)", // Adding transparency
-    height:45,
-    borderRadius:15,
-    flexDirection:"row",
-    padding:10,
-
-    alignItems:"center",
-
-    justifyContent: "space-between"
-},
 
 
 
-mainin:{
+  mainin:{
 
 
-height:180,
-width: Dimensions.get("window").width-40,
+    height:220 * heightRef,
+    width: Dimensions.get("window").width-40,
 
-backgroundColor:"#1877F2",
-marginTop:10,
-borderRadius:20,
-justifyContent:"flex-start",
-padding:15,
+    backgroundColor:"#1877F2",
+    marginTop:10,
+    borderRadius:20,
+    justifyContent:"flex-start",
+    padding:15,
 
 
 
 
 
-},
-noRecordText: {
-  textAlign: 'center',
-  marginTop: 100,
-  fontSize: 18,
-  color: 'grey',
-},
+  },
+  noRecordText: {
+    textAlign: 'center',
+    marginTop: 100,
+    fontSize: 18,
+    color: 'grey',
+  },
 });

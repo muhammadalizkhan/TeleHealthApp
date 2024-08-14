@@ -67,7 +67,7 @@ const HomeScreen = ({ navigation }) => {
             try {
                 const doctorsData = await getAllDoctors();
                 setDoctors(doctorsData);
-                console.log('doctors== > ', JSON.stringify(doctorsData, null,2))
+                // console.log('doctors== > ', JSON.stringify(doctorsData, null,2))
                 setFilteredDoctors(doctorsData);
                 setTopSpecialists(doctorsData); // Set top specialists initially
                 setLoading(false);
@@ -145,10 +145,10 @@ const HomeScreen = ({ navigation }) => {
 
                 <View style={styles.searchContainer}>
                     <View style={styles.input}>
-                        <Iconss name={'locate'} size={25} color={'#DAD9D9'} />
+
 
                         <TextInput
-                            style={{ marginLeft: 10 * widthRef, width: '80%', fontSize: 16 * fontRef, color: 'black' }}
+                            style={{ marginLeft: 10 * widthRef, width: '88%', fontSize: 16 * fontRef, color: 'black' }}
                             onChangeText={handleSearch}
                             value={inputText}
                             placeholder="Search Specialist"
@@ -160,7 +160,17 @@ const HomeScreen = ({ navigation }) => {
 
                     </View>
 
+                    <TouchableOpacity style={{marginLeft:12, backgroundColor:'#1877F2',
+                                       marginBottom:10, borderRadius:8,
+                        padding:0, width:48, height:48, justifyContent:'center',
+                        alignItems:'center'}}
+                               onPress={() => navigation.openDrawer()}>
+                        <Iconss name={'menu'} size={35} color={'white'}  />
+
+                    </TouchableOpacity>
+
                 </View>
+
 
                 <View style={styles.heading}>
                     <Text style={styles.text2}>Get Appointments</Text>
@@ -181,13 +191,23 @@ const HomeScreen = ({ navigation }) => {
                                         style={[styles.image, styles.absoluteImage, { resizeMode: 'cover', marginTop: 5 }]}
                                     /> */}
                                     <View style={{width:140 * heightRef, height:140 * heightRef, borderWidth:0,borderColor:'white',
-                                        position:'absolute', bottom:0, right:10, justifyContent:'center',
+                                        position:'absolute', bottom:-1.5, right:5, justifyContent:'center',
                                         alignItems:'center'
                                     }}>
                                     <Image
                                         source={{ uri: item.profileImg }}
-                                        style={[styles.image,  ]}
+
+
                                     />
+                                        { item?.profileImg ?
+                                            <Image source={{uri: item.profileImg}}
+                                                   style={[styles.image,  ]}
+                                            />
+                                            :
+                                            <Image source={images.doctorLogo}
+                                                   style={[styles.image,  ]}
+                                            />
+                                        }
                                     </View>
 
 
@@ -250,8 +270,21 @@ const HomeScreen = ({ navigation }) => {
                     renderItem={({ item }) => (
                         <View style={styles.appointmentItem1}>
                             <View style={styles.image1}>
-                                <Image source={{ uri: item.profileImg }}
-                                 style={{ width: 110 * heightRef, height: 110 * heightRef, borderRadius: 24 * heightRef }} />
+                                { item?.profileImg ?
+                                    <Image source={{uri: item.profileImg}}
+                                        style={{
+                                            width: 110 * heightRef,
+                                            height: 110 * heightRef,
+                                            borderRadius: 24 * heightRef
+                                        }}/>
+                                :
+                                    <Image source={images.doctorLogo}
+                                           style={{
+                                               width: 110 * heightRef,
+                                               height: 110 * heightRef,
+                                               borderRadius: 24 * heightRef
+                                           }}/>
+                                }
                             </View>
                             <View style={styles.contain2}>
                                 <Text style={styles.h1}>{item.firstName} {item.lastName}</Text>
@@ -398,7 +431,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: Dimensions.get('window').width,
+        width: '85%'    ,
+        alignSelf:'flex-start',
         paddingLeft: 15 * widthRef,
         paddingRight: 15 * widthRef,
     },
@@ -438,11 +472,12 @@ const styles = StyleSheet.create({
         marginTop: 20 * heightRef,
     },
     image: {
-        width: 130 * heightRef,
-        height: 130 * heightRef,
-        borderWidth: 1,
-        // borderColor: 'grey',
-        borderRadius: 10,
+        width: 120 * heightRef,
+        height: 120 * heightRef,
+        // borderWidth: 0.4,
+        // borderColor: 'black',
+        backgroundColor: 'white',
+        borderRadius: 24 * heightRef,
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 5 * widthRef,
@@ -457,7 +492,7 @@ const styles = StyleSheet.create({
         width: 110 * heightRef,
         height: 110 * heightRef,
         borderWidth: 1,
-        borderColor: 'grey',
+        borderColor:  "#DAD9D9",
         borderRadius: 24 * heightRef,
         justifyContent: 'center',
         alignItems: 'center',
@@ -469,7 +504,7 @@ const styles = StyleSheet.create({
     },
     appointmentItem1: {
         borderWidth: 1,
-        borderColor: '#A9A9A9',
+        borderColor: "#DAD9D9",
         margin: 10 * heightRef,
         marginLeft: 10 * widthRef,
         marginBottom: 5     * heightRef,

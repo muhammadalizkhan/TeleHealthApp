@@ -51,4 +51,9 @@ import Menu from "../assets/images/menu.png";
 import Cart from "../assets/images/cart.png";
 import Bell from "../assets/images/bell.png";
 import Filter from "../assets/images/filter.png";
-export default { Menu,Cart,Bell,Filter, BG,Card,Camera,Heart, open,Result,Plus,Detail,DSchedule, Treatment,Notification,Account, ArrowR,profile,Calenderg, Clock,thumbnail,PdfFile, docp,cards,Download, Arrow,Center,path,Patient, logo,Pills, logoSmall,Close, empty,onBoarding1,onBoarding2,onBoarding3,tickmark,calender,google,doctor, facebook,roleImage,doctorLogo,patientLogo,doctorCard,star,firstAid,person,location,profilePic,doctorPic,Check};
+import D1 from "../assets/images/d1.png";
+import D2 from "../assets/images/d2.png";
+import D3 from "../assets/images/d3.png";
+import D4 from "../assets/images/d4.png";
+
+export default { Menu,D1, D2,D3,D4, Cart,Bell,Filter, BG,Card,Camera,Heart, open,Result,Plus,Detail,DSchedule, Treatment,Notification,Account, ArrowR,profile,Calenderg, Clock,thumbnail,PdfFile, docp,cards,Download, Arrow,Center,path,Patient, logo,Pills, logoSmall,Close, empty,onBoarding1,onBoarding2,onBoarding3,tickmark,calender,google,doctor, facebook,roleImage,doctorLogo,patientLogo,doctorCard,star,firstAid,person,location,profilePic,doctorPic,Check};

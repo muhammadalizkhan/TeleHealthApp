@@ -58,23 +58,40 @@ const DiagnosticCenterScreen = () => {
   const renderItem = ({ item }) => (
       <TouchableOpacity style={styles.labContainer}
                         onPress={() => navigation.navigate('CenterDetail', { data: item })}>
+        <View style={{
+          backgroundColor:'white',
+          width:'95%',
+          alignSelf:'center',
+          justifyContent:'center',
+          alignItems:'center',
+          padding:10 * heightRef,
+          overflow:'hidden',
+          height:120
+        }}>
+
+
         {
           item.image ?
               (
                   item.image.endsWith('.svg') ? (
                       <SvgUri
                           width="100%"
-                          height="40%"
+                          height="70%"
                           uri={item.image}
                       />
                   ) : (
-                      <Image source={{ uri: item.image }} style={styles.labImage} resizeMode={'contain'} />
+                      <Image source={{ uri: item.image }} style={styles.labImage} resizeMode={'center'} />
                   )
               ) : (
-                  <Image source={images.Account} style={styles.labImage} />
+                  <View style={{height:50 * heightRef, width:'100%', backgroundColor:'#007BFF' }}>
+                    <Image source={images.Account} style={styles.labImage} />
+
+                  </View>
               )
         }
-        <View style={{ flexDirection: 'row', width: '100%', marginTop: 5, justifyContent: 'space-between' }}>
+        </View>
+        <View style={{ flexDirection: 'row', width: '100%', marginTop: 5, justifyContent: 'space-between',
+        paddingRight:10}}>
           <Text style={styles.title}>{item.centerName}</Text>
           <View style={styles.labRatingContainer}>
             <Text style={styles.labRating}>4.5</Text>
@@ -117,10 +134,10 @@ const DiagnosticCenterScreen = () => {
 
               <View style={styles.searchContainer}>
                 <View style={styles.input}>
-                  <Iconss name={'locate'} size={25} color={'#DAD9D9'} />
+                  {/*<Iconss name={'locate'} size={25} color={'#DAD9D9'} />*/}
 
                   <TextInput
-                      style={{ marginLeft: 10 * widthRef, width: '80%', fontSize: 16 * fontRef, color: 'black' }}
+                      style={{ marginLeft: 10 * widthRef, width: '90%', fontSize: 16 * fontRef, color: 'black' }}
                       onChangeText={setSearchQuery}
                       value={searchQuery}
                       placeholder="Search Specialist"
@@ -151,14 +168,15 @@ const DiagnosticCenterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'white',
 
   },
   title: {
     fontSize: 20 * fontRef,
     fontWeight: 'bold',
     marginLeft:8,
-    color:'black'
+    color:'black',
+
   },
 
   searchContainer: {
@@ -187,9 +205,8 @@ const styles = StyleSheet.create({
   },
   labContainer: {
     width: '100%',
-    height:360 * heightRef,
-    backgroundColor: '#F9F8F8',
-    padding: 10 * widthRef,
+    backgroundColor: 'white',
+    padding: 10 * heightRef,
     justifyContent:'center',
     // backgroundColor:'red',
     borderRadius: 10,
@@ -215,6 +232,7 @@ const styles = StyleSheet.create({
     color: '#8A8A8E',
     marginLeft: 8 * widthRef,
     marginTop: 5 * heightRef,
+    width:'90%'
   },
   labRatingContainer: {
     flexDirection: 'row',

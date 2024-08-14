@@ -34,71 +34,72 @@ const PatientDetail = () => {
 
 
       <View style={styles.spacer} />
-      <Text style={{ color: "#1877F2", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef }}>Basic Info</Text>
+      <Text style={{ color: "black", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef }}>Basic Info</Text>
 
       <View style={styles.r1}>
         <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey' }}>Disease :</Text>
         <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey' }}>{condition}</Text>
       </View>
-      <View style={styles.r1}>
-        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>Blood Group :</Text>
-        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>AB+</Text>
-      </View>
-      <View style={styles.r1}>
-        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Dietry :</Text>
-        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Non Veg</Text>
-      </View>
-      <View style={styles.r1}>
-        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>Height :</Text>
-        <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>5'7</Text>
-      </View>
-      <View style={styles.r1}>
-        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Age :</Text>
-        <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>30</Text>
-      </View>
-
-      <Text style={{  color: "#1877F2", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef , marginTop:10 * heightRef }}>Lab Results</Text>
-      <PdfResult />
-      <PdfResult />
-
-      {/* <Text style={{color:"#1877F2", fontWeight:"bold", fontSize:18,marginBottom:10, marginTop:10}}>Previous Appointment</Text>
-      <View style={styles.topBar}>
-        <View style={{flexDirection:"row", alignItems:"center"}}>
-          <Image
-            source={images.Calenderg}
-            resizeMode="cover"
-            style={{ height:25, width:25 }}
-          />
-          <Text style={styles.y1}> Fri,12 Apr</Text>
-        </View>
-        <View style={{flexDirection:'row', justifyContent:"center", alignItems:"center"}}>
-          <Image
-            source={images.Clock}
-            resizeMode="cover"
-            style={{ height:25, width:25 }}
-          />
-          <Text style={styles.y1}> 11:00 am</Text>
-        </View>
-      </View> */}
-
-      {/*<Text style={{  color: "#1877F2", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef , marginTop: 10  * heightRef}}>Send Prescription</Text>*/}
-      {/*<View style={styles.c1}>*/}
-      {/*  <Image*/}
-      {/*    source={images.docp}*/}
-      {/*    resizeMode="cover"*/}
-      {/*    style={{ height: 80, width: 80 }}*/}
-      {/*  />*/}
-      {/*  <View style={{ justifyContent: "center" }}>*/}
-      {/*    <Text style={{ color: "grey" }}>Enter the Prescription</Text>*/}
-      {/*  </View>*/}
-      {/*  <View style={{ justifyContent: "center" }}>*/}
-      {/*    <Image*/}
-      {/*      source={images.ArrowR}*/}
-      {/*      resizeMode="cover"*/}
-      {/*      style={{ height: 40, width: 40 }}*/}
-      {/*    />*/}
-      {/*  </View>*/}
+      {/*<View style={styles.r1}>*/}
+      {/*  <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>Blood Group :</Text>*/}
+      {/*  <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>AB+</Text>*/}
       {/*</View>*/}
+      {/*<View style={styles.r1}>*/}
+      {/*  <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Dietry :</Text>*/}
+      {/*  <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Non Veg</Text>*/}
+      {/*</View>*/}
+      {/*<View style={styles.r1}>*/}
+      {/*  <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>Height :</Text>*/}
+      {/*  <Text style={{ fontWeight: "bold" , fontSize: 15, color:'dimgrey'}}>5'7</Text>*/}
+      {/*</View>*/}
+      {/*<View style={styles.r1}>*/}
+      {/*  <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>Age :</Text>*/}
+      {/*  <Text style={{ fontWeight: "bold", fontSize: 15, color:'dimgrey' }}>30</Text>*/}
+      {/*</View>*/}
+
+      <Text style={{  color: "black", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef , marginTop:10 * heightRef }}>Lab Results</Text>
+      {/*<PdfResult />*/}
+      {/*<PdfResult />*/}
+
+      {/*<Text style={{color:"#1877F2", fontWeight:"bold", fontSize:18,marginBottom:10, marginTop:10}}>Previous Appointment</Text>*/}
+      {/*<View style={styles.topBar}>*/}
+      {/*  <View style={{flexDirection:"row", alignItems:"center"}}>*/}
+      {/*    <Image*/}
+      {/*      source={images.Calenderg}*/}
+      {/*      resizeMode="cover"*/}
+      {/*      style={{ height:25, width:25 }}*/}
+      {/*    />*/}
+      {/*    <Text style={styles.y1}> Fri,12 Apr</Text>*/}
+      {/*  </View>*/}
+      {/*  <View style={{flexDirection:'row', justifyContent:"center", alignItems:"center"}}>*/}
+      {/*    <Image*/}
+      {/*      source={images.Clock}*/}
+      {/*      resizeMode="cover"*/}
+      {/*      style={{ height:25, width:25 }}*/}
+      {/*    />*/}
+      {/*    <Text style={styles.y1}> 11:00 am</Text>*/}
+      {/*  </View>*/}
+      {/*</View> */}
+
+
+      <Text style={{  color: "black", fontWeight: "bold", fontSize: 20 * fontRef, marginBottom: 10 * heightRef , marginTop: 10  * heightRef}}>Send Prescription</Text>
+      <TouchableOpacity style={styles.c1} onPress={()=> navigation.navigate('PrescriptionScreen', { user: user, condition: condition })}>
+        <Image
+          source={images.docp}
+          resizeMode="cover"
+          style={{ height: 80, width: 80 }}
+        />
+        <View style={{ justifyContent: "center" }}>
+          <Text style={{ color: "black", fontSize:20 * fontRef, fontWeight:'500' }}>Enter the Prescription</Text>
+        </View>
+        <View style={{ justifyContent: "center" }}>
+          <Image
+            source={images.ArrowR}
+            resizeMode="cover"
+            style={{ height: 30, width: 30, tintColor:'black' }}
+          />
+        </View>
+      </TouchableOpacity>
       </View>
     </SafeAreaView>
   )
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   c1: {
     height: 90 * heightRef,
     borderWidth: 1,
-    borderColor: "grey",
+    borderColor: '#DAD9D9',
     borderRadius: 15,
     width: Dimensions.get("window").width - 40,
     justifyContent: "space-around",
@@ -157,8 +158,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-
+    width:'100%',
+    height:'100%',
+    flex:1,
     justifyContent: "flex-start",
+    backgroundColor:'white'
   },
   circularBox: {
     width: 50 * heightRef,
