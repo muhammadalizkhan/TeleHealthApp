@@ -17,7 +17,7 @@ const UpdateDScreen = () => {
                 if (response !== null) {
                     console.log(response)
                     const parsedResponse = JSON.parse(response);
-                    console.log('response == ', JSON.stringify(parsedResponse, null, 2));
+                    // console.log('response == ', JSON.stringify(parsedResponse, null, 2));
                     setDoctorData(parsedResponse?.user); // Assuming your response contains the necessary doctor data
                 }
             } catch (error) {
@@ -67,7 +67,7 @@ const UpdateDScreen = () => {
     };
 
 
-    console.log("doctor ", JSON.stringify(doctorData, null,2))
+    // console.log("doctor ", JSON.stringify(doctorData, null,2))
 
 
     const updateUserProfile = async () => {

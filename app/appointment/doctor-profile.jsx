@@ -60,7 +60,7 @@ const DoctorProfile = () => {
 
                                     <View style={styles.cont}>
                                         <Text style={styles.t1}>{data.firstName} {data.lastName}</Text>
-                                        <Text style={styles.t2}>{data.speciality[0].specialization.name}</Text>
+                                        <Text style={styles.t2}>{data.speciality?.[0]?.specialization?.name}</Text>
                                     </View>
 
                                     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
@@ -68,7 +68,7 @@ const DoctorProfile = () => {
                                         <Text style={{ fontSize: 25 * fontRef, fontWeight: 'bold', color:'grey' }}>4.5 </Text>
 
                                         <Image
-                                            source={images.star}
+                                            source={images?.star}
                                             resizeMode="cover"
 
                                             style={{

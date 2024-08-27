@@ -53,7 +53,7 @@ const DoctorScreen = () => {
         fetchData();
     }, [doctorData]);
 
-    console.log('doctor ====> ', doctor)
+    // console.log('doctor ====> ', doctor)
     // const name = "Dr James";
     // const doctorDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitaeLorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc vitae";
 

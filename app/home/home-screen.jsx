@@ -213,7 +213,7 @@ const HomeScreen = ({ navigation }) => {
 
                                     {/* Other content */}
                                     <Text style={styles.t1}>{item.firstName} {item.lastName}</Text>
-                                    <Text style={styles.t2}>{item.speciality[0].specialization.name}</Text>
+                                    <Text style={styles.t2}>{item.speciality[0]?.specialization?.name}</Text>
                                     <Text style={styles.t3}>500+ points</Text>
                                     <TouchableOpacity style={styles.contain1}
                                      onPress={() => {
@@ -288,7 +288,7 @@ const HomeScreen = ({ navigation }) => {
                             </View>
                             <View style={styles.contain2}>
                                 <Text style={styles.h1}>{item.firstName} {item.lastName}</Text>
-                                <Text style={styles.h2}>{item.speciality[0].specialization.name}</Text>
+                                <Text style={styles.h2}>{item.speciality[0]?.specialization?.name}</Text>
                                 <Text style={styles.h2}>Mon-Fri | 9:00 Am to 5:00 Pm</Text>
                                 <TouchableOpacity
                                     style={styles.buttonContainer}

@@ -27,8 +27,8 @@ const SignIn = ({navigation,route}) => {
   const { role } = route.params;
   console.log(role,'=======')
 	const {loggedIn} = useContext(AuthContext);
-	const [email, setEmail] = useState();
-	const [password, setPassword] = useState();
+	const [email, setEmail] = useState('arham@gmail.com');
+	const [password, setPassword] = useState('Password@11');
 	const [showPassword, setShowPassword] = useState(true);
     const [ press, setPress] = useState(false);
 
@@ -68,7 +68,7 @@ const handleLoginPress = async () => {
 
 	try {
 	  const response = await doctorLogin('/doctor/login', data);
-	  console.log('response == ', JSON.stringify(response, null, 2));
+	//   console.log('response == ', JSON.stringify(response, null, 2));
 
 	  // Save the response in AsyncStorage
 	  await AsyncStorage.setItem('DoctorData', JSON.stringify(response));

@@ -17,7 +17,7 @@ import {fontRef, heightRef} from "../../constants/screenSize";
 const MedicalRecord = ({ navigation }) => {
 
   const { logout, loggedIn, userData } = useContext(AuthContext);
-  console.log('user data ==> ', userData)
+  //console.log('user data ==> ', userData)
 
   const url = `https://api-dev.mhc.doginfo.click/ehr-system?userId=${userData.user._id}`;
 

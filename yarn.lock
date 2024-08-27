@@ -3755,6 +3755,7 @@ __metadata:
     react-native-flash-message: ^0.4.2
     react-native-gesture-handler: ^2.16.2
     react-native-get-random-values: ^1.11.0
+    react-native-incall-manager: ^4.2.0
     react-native-modal-datetime-picker: ^17.1.0
     react-native-modern-datepicker: ^1.0.0-beta.91
     react-native-paper: ^5.12.3
@@ -9665,6 +9666,15 @@ __metadata:
   peerDependencies:
     react-native: ">=0.56"
   checksum: 07729f70a007f7a3b8f98ebf687c1298ba288b87dd71d8ba385be6b5a377718b27b97547bbe1db6b225b83ee109dfce0b01721e6ed535d53892f3ac81e6bf975
+  languageName: node
+  linkType: hard
+
+"react-native-incall-manager@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "react-native-incall-manager@npm:4.2.0"
+  peerDependencies:
+    react-native: ">=0.40.0"
+  checksum: 96a8d48f2fca4a56a04650be54efe48db21c52a1ef5dff7ccd05d529cef939123f0a1c54ec2e05597aaad173425a5ef992dfd715c7244759004606e944bf6f15
   languageName: node
   linkType: hard
 

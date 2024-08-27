@@ -1,15 +1,24 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Dimensions, FlatList } from 'react-native';
-import { images } from "../../constants";
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  FlatList,
+} from 'react-native';
+import {images} from '../../constants';
 import Icons from 'react-native-vector-icons/dist/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showMessage } from 'react-native-flash-message';
-import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
-import {useSocket} from "../context/SocketContext";
-import {requestCall} from "../services/socketService";
-import {mediaDevices, RTCView} from "react-native-webrtc";
+import {showMessage} from 'react-native-flash-message';
+import {fontRef, heightRef, widthRef} from '../../constants/screenSize';
+import {useSocket} from '../context/SocketContext';
+import {requestCall, socketConnection} from '../services/socketService';
+import {mediaDevices, RTCView} from 'react-native-webrtc';
 
-const Index1 = ({ navigation }) => {
+const Index1 = ({navigation}) => {
   const [activeTab, setActiveTab] = useState('Upcoming');
   const [complete, setComplete] = useState([]);
   const [pending, setPending] = useState([]);
@@ -18,79 +27,16 @@ const Index1 = ({ navigation }) => {
   const [tokens, setTokens] = useState(null);
   const [loading, setLoading] = useState(false);
   // console.log('doctor data ', doctorData)
-  const { state, dispatch } = useSocket();
+  const {state, dispatch} = useSocket();
   const connectionRef = useRef();
   const [stream, setStream] = useState(null);
 
+  const [callerImg, setCallerImg] = useState();
+  const [callerName, setCallerName] = useState('');
+  const [isUserVideoStreaming, setIsUserVideoStreaming] = useState();
 
   console.log('Checking WebRTC support');
   console.log('mediaDevices:', mediaDevices);
-
-  if (mediaDevices.getUserMedia) {
-    console.log('WebRTC getUserMedia is supported');
-    try {
-      const stream =  mediaDevices.getUserMedia({ video: true, audio: true });
-      console.log('Stream:', stream);
-    } catch (error) {
-      console.error('Error getting user media:', error);
-    }
-  } else {
-    console.error('WebRTC getUserMedia is not supported');
-  }
-  const startVideoCall = async () => {
-    try {
-      const videoConstraints = {
-        mandatory: {
-          minWidth: 640,
-          minHeight: 480,
-          minFrameRate: 30,
-        },
-        facingMode: 'user', // Use 'environment' for the rear camera
-      };
-
-      const mediaStream = await mediaDevices.getUserMedia({
-        video: videoConstraints,
-        audio: true,
-      });
-
-      // Check and log the video and audio tracks
-      const videoTracks = mediaStream.getVideoTracks();
-      const audioTracks = mediaStream.getAudioTracks();
-
-      console.log('Video Tracks:', videoTracks);
-      console.log('Audio Tracks:', audioTracks);
-
-      if (videoTracks.length > 0) {
-        console.log('Video Track ID:', videoTracks[0].id);
-      } else {
-        console.error('No video track available.');
-      }
-
-      if (audioTracks.length > 0) {
-        console.log('Audio Track ID:', audioTracks[0].id);
-      }
-
-      setStream(mediaStream);
-      dispatch({ type: 'SET_USER_STREAM', payload: mediaStream });
-
-      const doctorName = `${doctorData.firstName} ${doctorData.lastName}`;
-      const doctorProfileImg = doctorData.profileImg;
-
-      requestCall(
-          doctorName,
-          doctorProfileImg,
-          mediaStream,
-          setStream,
-          (accepted) => dispatch({ type: 'SET_CALL_ACCEPTED', payload: accepted }),
-          connectionRef,
-          setCallerImg,
-          setCallerName,
-          setIsUserVideoStreaming
-      );
-    } catch (error) {
-      console.error('Error starting video call:', error);
-    }
-  };
 
   useEffect(() => {
     const getDoctorData = async () => {
@@ -117,8 +63,12 @@ const Index1 = ({ navigation }) => {
 
   useEffect(() => {
     if (Array.isArray(userRecords)) {
-      const completeAppointments = userRecords.filter(appointment => !appointment.chatToken.isSessionValid);
-      const pendingAppointments = userRecords.filter(appointment => appointment.chatToken.isSessionValid);
+      const completeAppointments = userRecords.filter(
+        (appointment) => !appointment.chatToken.isSessionValid
+      );
+      const pendingAppointments = userRecords.filter(
+        (appointment) => appointment.chatToken.isSessionValid
+      );
       setComplete(completeAppointments);
       setPending(pendingAppointments);
     }
@@ -139,7 +89,7 @@ const Index1 = ({ navigation }) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokens.access_token}`,
+          Authorization: `Bearer ${tokens.access_token}`,
         },
       });
 
@@ -156,7 +106,7 @@ const Index1 = ({ navigation }) => {
       const result = await response.json();
       setUserRecords(result);
       showMessage({
-        message: "Records fetched successfully",
+        message: 'Records fetched successfully',
         type: 'success',
       });
     } catch (error) {
@@ -173,11 +123,11 @@ const Index1 = ({ navigation }) => {
   const handleTabPress = (tabName) => {
     setActiveTab(tabName);
   };
-  const renderUpcomingItem = ({ item }) => (
+  const renderUpcomingItem = ({item}) => (
     <View style={styles.upcom}>
       <View style={styles.topBar}>
-      <Text style={styles.y1}>  {item.appointmentDetails.date }</Text>
-      <Text style={styles.y1}> {item.appointmentDetails.startTime}</Text>
+        <Text style={styles.y1}> {item.appointmentDetails.date}</Text>
+        <Text style={styles.y1}> {item.appointmentDetails.startTime}</Text>
       </View>
       <View style={styles.row}>
         <View style={styles.circular}>
@@ -188,18 +138,33 @@ const Index1 = ({ navigation }) => {
           />
         </View>
         <View style={styles.c1}>
-          <Text style={styles.name}>{item?.user?.firstName} {item?.user?.lastName}</Text>
-          <Text style={styles.disease}>Disease: {item?.user?.medicalHistory[0]?.condition}</Text>
+          <Text style={styles.name}>
+            {item?.user?.firstName} {item?.user?.lastName}
+          </Text>
+          <Text style={styles.disease}>
+            Disease: {item?.user?.medicalHistory[0]?.condition}
+          </Text>
           <Text style={styles.gender}>Gender: {item?.user?.gender}</Text>
-          <View style={{ flexDirection: "row", justifyContent: "flex-end", width: 150 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              width: 150,
+            }}
+          >
             <TouchableOpacity
-                onPress={startVideoCall}
-                style={styles.cameraButton}
+              onPress={() =>
+                navigation.navigate('Meeting', {
+                  appointment: item,
+                  userRole: 'doctor',
+                })
+              }
+              style={styles.cameraButton}
             >
               <Image
-                  source={images.Camera}
-                  resizeMode="cover"
-                  style={styles.cameraImage}
+                source={images.Camera}
+                resizeMode="cover"
+                style={styles.cameraImage}
               />
             </TouchableOpacity>
           </View>
@@ -208,25 +173,51 @@ const Index1 = ({ navigation }) => {
     </View>
   );
 
-  const renderCompletedItem = ({ item }) => (
+  const renderCompletedItem = ({item}) => (
     <View style={styles.maininner}>
       <View style={styles.r1}>
         <View style={styles.c1}>
-          <Text style={{ fontSize: 20 * fontRef, fontWeight: "bold", color:'black' }}>{item?.user?.firstName} {item?.user?.lastName}</Text>
-          <Text style={{fontSize: 16 * fontRef,color:'black', fontWeight:'500'}}>Cardiologist</Text>
+          <Text
+            style={{fontSize: 20 * fontRef, fontWeight: 'bold', color: 'black'}}
+          >
+            {item?.user?.firstName} {item?.user?.lastName}
+          </Text>
+          <Text
+            style={{fontSize: 16 * fontRef, color: 'black', fontWeight: '500'}}
+          >
+            Cardiologist
+          </Text>
         </View>
         <View style={styles.circle}>
           <Image
             source={images.Check}
             resizeMode="cover"
-            style={{ height: 50 * heightRef, width: 50 * heightRef }}
+            style={{height: 50 * heightRef, width: 50 * heightRef}}
           />
         </View>
       </View>
-      <Text style={{ fontSize: 16 * fontRef,color:'black', fontWeight:'500', marginVertical:10, marginLeft:10}}>It was a successful completed appointment.</Text>
+      <Text
+        style={{
+          fontSize: 16 * fontRef,
+          color: 'black',
+          fontWeight: '500',
+          marginVertical: 10,
+          marginLeft: 10,
+        }}
+      >
+        It was a successful completed appointment.
+      </Text>
       <View style={styles.topBar}>
-        <Text style={styles.y1}>  {new Date(item.appointmentDetails.date * 1000).toLocaleDateString()}</Text>
-        <Text style={styles.y1}> {new Date(item.appointmentDetails.startTime * 1000).toLocaleTimeString()}</Text>
+        <Text style={styles.y1}>
+          {' '}
+          {new Date(item.appointmentDetails.date * 1000).toLocaleDateString()}
+        </Text>
+        <Text style={styles.y1}>
+          {' '}
+          {new Date(
+            item.appointmentDetails.startTime * 1000
+          ).toLocaleTimeString()}
+        </Text>
       </View>
     </View>
   );
@@ -236,7 +227,7 @@ const Index1 = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.appBar}>
         <View style={styles.appBarPart1}>
-          <TouchableOpacity onPress={() => navigation.goBack()} >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icons name={'chevron-back'} size={30} color="black" />
           </TouchableOpacity>
           <Text style={styles.h1}> My Schedule</Text>
@@ -250,26 +241,40 @@ const Index1 = ({ navigation }) => {
         {/*</View>*/}
       </View>
 
-      <View style={{ padding: 20 }}>
+      <View style={{padding: 20}}>
         <View style={styles.tabbar}>
           <TouchableOpacity
             style={[styles.tab, activeTab === 'Upcoming' && styles.activeTab]}
             onPress={() => handleTabPress('Upcoming')}
           >
-            <Text style={[styles.tabText, activeTab === 'Upcoming' && styles.activeTabText]}>Upcoming</Text>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Upcoming' && styles.activeTabText,
+              ]}
+            >
+              Upcoming
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.tab, activeTab === 'Completed' && styles.activeTab]}
             onPress={() => handleTabPress('Completed')}
           >
-            <Text style={[styles.tabText, activeTab === 'Completed' && styles.activeTabText]}>Completed</Text>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Completed' && styles.activeTabText,
+              ]}
+            >
+              Completed
+            </Text>
           </TouchableOpacity>
         </View>
 
         {activeTab === 'Upcoming' && (
           <FlatList
             data={pending}
-            contentContainerStyle={{paddingBottom:180}}
+            contentContainerStyle={{paddingBottom: 180}}
             renderItem={renderUpcomingItem}
             keyExtractor={(item) => item._id.toString()}
             ListEmptyComponent={<Text>No upcoming appointments.</Text>}
@@ -279,7 +284,7 @@ const Index1 = ({ navigation }) => {
         {activeTab === 'Completed' && (
           <FlatList
             data={complete}
-            contentContainerStyle={{paddingBottom:180}}
+            contentContainerStyle={{paddingBottom: 180}}
             renderItem={renderCompletedItem}
             keyExtractor={(item) => item._id.toString()}
             ListEmptyComponent={<Text>No completed appointments.</Text>}
@@ -288,12 +293,9 @@ const Index1 = ({ navigation }) => {
 
         {/* Render the video stream if available */}
         {stream && (
-            <View style={styles.videoContainer}>
-              <RTCView
-                  streamURL={stream.toURL()}
-                  style={styles.rtcView}
-              />
-            </View>
+          // <View style={styles.videoContainer}>
+          <RTCView streamURL={stream.toURL()} style={styles.rtcView} />
+          // </View>
         )}
       </View>
     </SafeAreaView>
@@ -307,48 +309,48 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tabbar: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
+    flexDirection: 'row',
+    backgroundColor: '#fff',
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 1,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     borderRadius: 20,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   tab: {
     flex: 1,
     height: 50 * heightRef,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   activeTab: {
-    backgroundColor: "#1877F2",
+    backgroundColor: '#1877F2',
   },
   tabText: {
-    color: "black",
-    fontSize: 16 * fontRef
+    color: 'black',
+    fontSize: 16 * fontRef,
   },
   activeTabText: {
-    color: "#fff",
+    color: '#fff',
   },
   h1: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 22 * fontRef,
     color: 'black',
-    marginLeft: 10  * widthRef,
+    marginLeft: 10 * widthRef,
   },
   appBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10 * heightRef,
   },
   appBarPart1: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   circularBox: {
     width: 50 * heightRef,
@@ -366,13 +368,13 @@ const styles = StyleSheet.create({
     padding: 15 * heightRef,
   },
   topBar: {
-    backgroundColor: "#1877F2",
+    backgroundColor: '#1877F2',
     height: 45 * heightRef,
     borderRadius: 15,
-    flexDirection: "row",
-    padding: 10  * heightRef,
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    padding: 10 * heightRef,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginTop: 0,
     marginBottom: 0,
   },
@@ -398,15 +400,14 @@ const styles = StyleSheet.create({
     fontSize: 22 * fontRef,
     fontWeight: 'bold',
     color: 'white',
-
   },
   disease: {
     color: 'white',
-    fontWeight:'bold'
+    fontWeight: 'bold',
   },
   gender: {
     fontWeight: 'bold',
-    color: 'white'
+    color: 'white',
   },
   cameraButton: {
     borderWidth: 2,
@@ -417,36 +418,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1877F2',
-
   },
   cameraImage: {
-
     height: 20 * heightRef,
-    width: 20 * heightRef
+    width: 20 * heightRef,
   },
   y1: {
     fontWeight: 'bold',
-    color: 'white'
+    color: 'white',
   },
   circle: {
     height: 70 * heightRef,
     width: 70 * heightRef,
-    backgroundColor: "#1877F2",
+    backgroundColor: '#1877F2',
     borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   maininner: {
     height: 190 * heightRef,
-    width: Dimensions.get("window").width - 40,
-    backgroundColor: "lightblue",
+    width: Dimensions.get('window').width - 40,
+    backgroundColor: 'lightblue',
     marginTop: 10 * heightRef,
     borderRadius: 20,
     padding: 15 * heightRef,
   },
   r1: {
-    flexDirection: "row",
-    justifyContent: 'space-between'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   videoContainer: {
     flex: 1,
@@ -457,7 +456,8 @@ const styles = StyleSheet.create({
     height: 200 * heightRef,
   },
   rtcView: {
-    width: '100%',
-    height: '100%',
+    width: 300,
+    height: 200,
+    position: 'absolute',
   },
 });
