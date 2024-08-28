@@ -82,9 +82,19 @@ const CustomDrawer = ({navigation}) => {
           <Image
               source={images.Calenderg}
               resizeMode="contain"
-              style={{height:22 * heightRef, width:22 * heightRef, marginRight:20 * widthRef, marginLeft:6 * widthRef}}
+              style={{height:22 * heightRef, width:22 * heightRef, marginRight:15 * widthRef, marginLeft:6 * widthRef}}
             />
             <Text style={styles.menuItem}>Calender</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate("UserResults")}>
+          <View style={styles.r1}>
+            <Image
+                source={images.Detail}
+                resizeMode="contain"
+                style={{height:22 * heightRef, width:22 * heightRef, marginRight:15 * widthRef, marginLeft:6 * widthRef}}
+            />
+            <Text style={styles.menuItem}>Test Records</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => logout()}>
@@ -92,7 +102,7 @@ const CustomDrawer = ({navigation}) => {
         <Image
               source={images.open}
               resizeMode="contain"
-              style={{height:34 * heightRef, width:34 * heightRef, marginRight:16 * widthRef}}
+              style={{height:34 * heightRef, width:34 * heightRef, marginRight:8 * widthRef}}
             />
           <Text style={styles.menuItem}> Logout</Text>
         </View>
