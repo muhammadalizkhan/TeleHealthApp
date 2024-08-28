@@ -236,10 +236,14 @@ const Index = ({navigation, session, chatToken}) => {
         {/*</View>*/}
       </View>
 
-        <View style={{ flex: 1,padding:20, width:'100%', height:'100%'}}>
-
-          <View style={styles.spacer} />
-          <View style={styles.tabbar}>
+      <View style={{padding: 20}}>
+        <View style={styles.spacer} />
+        <View style={styles.tabbar}>
+          {/* Edited by Yaseen */}
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Pending' && styles.activeTab]}
+            onPress={() => handleTabPress('Pending')}
+          >
             {/* Edited by Yaseen */}
             <Text
               style={[
@@ -249,7 +253,7 @@ const Index = ({navigation, session, chatToken}) => {
             >
               Pending
             </Text>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             style={[styles.tab, activeTab === 'Completed' && styles.activeTab]}
             onPress={() => handleTabPress('Completed')}
@@ -269,34 +273,6 @@ const Index = ({navigation, session, chatToken}) => {
           >
             <Text style={[styles.tabText, activeTab === 'Cancelled' && styles.activeTabText]}>Cancelled</Text>
           </TouchableOpacity> */}
-          </View>
-
-          {complete.length === 0 && pending.length === 0 ? (
-              <Text style={styles.noRecordText}>No record found</Text>
-          ) : (
-              <>
-                {activeTab === 'Completed' && (
-                    <FlatList
-                        nestedScrollEnabled={true}
-                        data={complete}
-                        renderItem={renderCompleteAppointment}
-                        keyExtractor={(item, index) => item._id + index}
-                        
-                    />
-                )}
-                {/* Edited by Yaseen */}
-                {activeTab === 'Pending' && (
-                    <FlatList
-                        nestedScrollEnabled={true}
-                        data={pending}
-                        renderItem={renderPendingAppointment}
-                        keyExtractor={(item, index) => item._id + index}
-
-                    />
-                )}
-              </>
-          )}
-          {/* {activeTab === 'Cancelled' && <CancelledSchedule />} */}
         </View>
         {complete.length === 0 && pending.length === 0 ? (
           <Text style={styles.noRecordText}>No record found</Text>
@@ -382,8 +358,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   container: {
-    flex:1,
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
   },
   y1: {
     color: 'white',
