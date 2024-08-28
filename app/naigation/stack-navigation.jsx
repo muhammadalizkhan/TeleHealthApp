@@ -39,6 +39,7 @@ import StripeGateway from "../appointment/payments";
 import DiagnosticCenterDetail from "../DiagnosticCenterScreen/CenterDetails";
 import submitBooking from "../DiagnosticCenterScreen/SubmitBooking";
 import PrescriptionScreen from "../doctorprofile/patientRecord/AddPrescription";
+import UserResults from "../TestRecords/LabTestRecords";
 const Stack = createStackNavigator();
 
 function StackNavigator() {
@@ -81,6 +82,7 @@ function StackNavigator() {
         <Stack.Screen name="CenterDetail" component={DiagnosticCenterDetail} options={{ headerShown: false }} />
         <Stack.Screen name="submitBooking" component={submitBooking} options={{ headerShown: false }} />
         <Stack.Screen name="PrescriptionScreen" component={PrescriptionScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="UserResults" component={UserResults} options={{ headerShown: false }} />
 
         {/*StripeGateway*/}
 
