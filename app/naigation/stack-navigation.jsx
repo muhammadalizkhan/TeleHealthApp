@@ -31,7 +31,7 @@ import Index1 from '../doctorSchedule/index1';
 import UpcomingSchedule from '../doctorSchedule/upcoming-schedule';
 import DParentScreen from '../doctorprofile/d-parent-screen';
 import Splash from '../auth';
-import notifications from '../notification/notifications';
+import Notifications from '../notification/notifications';
 import UpdateScreen from '../UpdateScreen';
 import DiagnosticCenterScreen from '../DiagnosticCenterScreen';
 import UpdateDScreen from '../UpdateDoctor';
@@ -46,40 +46,40 @@ const Stack = createStackNavigator();
 function StackNavigator() {
   return (
     <NavigationContainer>
-       <Stack.Navigator initialRouteName="homescreen">
-       <Stack.Screen name="Splash" component={Splash}  options={{ headerShown: false }}/>
-        <Stack.Screen name="Home" component={Welcome}  options={{ headerShown: false }}/>
-        <Stack.Screen name="onboarding2" component={Onboarding2}  options={{ headerShown: false }}/>
-        <Stack.Screen name="onboarding3" component={Onboarding3}  options={{ headerShown: false }}/>
-        <Stack.Screen name="sign-in" component={SignIn}  options={{ headerShown: false }}/>
+      <Stack.Navigator initialRouteName="homescreen">
+        <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
+        <Stack.Screen name="Home" component={Welcome} options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding2" component={Onboarding2} options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding3" component={Onboarding3} options={{ headerShown: false }} />
+        <Stack.Screen name="sign-in" component={SignIn} options={{ headerShown: false }} />
         {/* <Stack.Screen name="forgot-password" component={ForgetPassword}  options={{ headerShown: false }}/>
         <Stack.Screen name="reset-password" component={Resetpassword}  options={{ headerShown: false }}/>
         <Stack.Screen name="sign-up" component={SignUp}  options={{ headerShown: false }}/>
         <Stack.Screen name="verification-code" component={VerificationCode}  options={{ headerShown: false }}/> */}
-        <Stack.Screen name="homescreen" component={HomeScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="doctor-profile" component={DoctorProfile}  options={{ headerShown: false }}/>
-        <Stack.Screen name="schedule-appointment" component={ScheduleAappointmnet}  options={{ headerShown: false }}/>
-        <Stack.Screen name="confirm-appointment" component={ConfirmAppointment}  options={{ headerShown: false }}/>
-        <Stack.Screen name="schedule-index" component={Index}  options={{ headerShown: false }}/>
-        <Stack.Screen name="role-login" component={RoleLogin}  options={{ headerShown: false }}/>
-        <Stack.Screen name="medical-record" component={MedicalRecord}  options={{ headerShown: false }}/>
-        <Stack.Screen name="prescription" component={Prescription}  options={{ headerShown: false }}/>
-        <Stack.Screen name="diagnostic-center" component={DiagnosticCenter}  options={{ headerShown: false }}/>
+        <Stack.Screen name="homescreen" component={HomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="doctor-profile" component={DoctorProfile} options={{ headerShown: false }} />
+        <Stack.Screen name="schedule-appointment" component={ScheduleAappointmnet} options={{ headerShown: false }} />
+        <Stack.Screen name="confirm-appointment" component={ConfirmAppointment} options={{ headerShown: false }} />
+        <Stack.Screen name="schedule-index" component={Index} options={{ headerShown: false }} />
+        <Stack.Screen name="role-login" component={RoleLogin} options={{ headerShown: false }} />
+        <Stack.Screen name="medical-record" component={MedicalRecord} options={{ headerShown: false }} />
+        <Stack.Screen name="prescription" component={Prescription} options={{ headerShown: false }} />
+        <Stack.Screen name="diagnostic-center" component={DiagnosticCenter} options={{ headerShown: false }} />
         {/* <Stack.Screen name="doctor-screen" component={DoctorScreen}  options={{ headerShown: false }}/> */}
-        <Stack.Screen name="patient-record" component={PatientRecord}  options={{ headerShown: false }}/>
-        <Stack.Screen name="patient-detail" component={PatientDetail}  options={{ headerShown: false }}/>
-        <Stack.Screen name="patient-prescription" component={PatientPrescription}  options={{ headerShown: false }}/>
-        <Stack.Screen name="patient-record-component" component={PatientRecordComponent}  options={{ headerShown: false }}/>
-        <Stack.Screen name="parentscreen" component={ParentScreen}  options={{ headerShown: false }}/>
-        <Stack.Screen name="video-call" component={VideoCall}  options={{ headerShown: false }}/>
-        <Stack.Screen name="doctor-schedule" component={Index1}  options={{ headerShown: false }}/>
-        <Stack.Screen name="UpcomingSchedule" component={UpcomingSchedule}  options={{ headerShown: false }} />
-        <Stack.Screen name="DParent-screen" component={DParentScreen}  options={{ headerShown: false }} />
-        <Stack.Screen name="notifications" component={notifications}  options={{ headerShown: false }} />
-        <Stack.Screen name="UpdateScreen" component={UpdateScreen}  options={{ headerShown: false }} />
-        <Stack.Screen name="DiagnosticCenterScreen" component={DiagnosticCenterScreen}  options={{ headerShown: false }} />
-        <Stack.Screen name="UpdateDScreen" component={UpdateDScreen}  options={{ headerShown: false }} />
-        <Stack.Screen name="StripeGateway" component={StripeGateway}  options={{ headerShown: false }} />
+        <Stack.Screen name="patient-record" component={PatientRecord} options={{ headerShown: false }} />
+        <Stack.Screen name="patient-detail" component={PatientDetail} options={{ headerShown: false }} />
+        <Stack.Screen name="patient-prescription" component={PatientPrescription} options={{ headerShown: false }} />
+        <Stack.Screen name="patient-record-component" component={PatientRecordComponent} options={{ headerShown: false }} />
+        <Stack.Screen name="parentscreen" component={ParentScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="video-call" component={VideoCall} options={{ headerShown: false }} />
+        <Stack.Screen name="doctor-schedule" component={Index1} options={{ headerShown: false }} />
+        <Stack.Screen name="UpcomingSchedule" component={UpcomingSchedule} options={{ headerShown: false }} />
+        <Stack.Screen name="DParent-screen" component={DParentScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="notifications" component={Notifications} options={{ headerShown: false }} />
+        <Stack.Screen name="UpdateScreen" component={UpdateScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="DiagnosticCenterScreen" component={DiagnosticCenterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="UpdateDScreen" component={UpdateDScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="StripeGateway" component={StripeGateway} options={{ headerShown: false }} />
         <Stack.Screen name="CenterDetail" component={DiagnosticCenterDetail} options={{ headerShown: false }} />
         <Stack.Screen name="submitBooking" component={submitBooking} options={{ headerShown: false }} />
         <Stack.Screen name="PrescriptionScreen" component={PrescriptionScreen} options={{ headerShown: false }} />

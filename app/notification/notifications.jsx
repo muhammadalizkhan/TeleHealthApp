@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, SafeAreaView, Dimensions, Image, TouchableOpaci
 import { images } from "../../constants";
 import React from 'react'
 
-const notifications = () => {
+const Notifications = () => {
   return (
     <View>
 
@@ -78,7 +78,7 @@ const notifications = () => {
   )
 }
 
-export default notifications
+export default Notifications
 
 const styles = StyleSheet.create({
 
@@ -172,11 +172,11 @@ const styles = StyleSheet.create({
 
 
   },
-  t1text:{
-    color:'white'
+  t1text: {
+    color: 'white'
   },
-  t2:{
-    color:'gray'
+  t2: {
+    color: 'gray'
   },
 
 
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
 
     fontWeight: "bold",
     fontSize: 25,
-    color:'black'
+    color: 'black'
 
 
   },

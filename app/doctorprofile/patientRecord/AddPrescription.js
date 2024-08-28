@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -12,16 +12,21 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Ionicons';
-import {fontRef, heightRef, widthRef} from "../../../constants/screenSize";
-import {images} from "../../../constants";
-import {showMessage} from "react-native-flash-message";
-import {SvgUri} from "react-native-svg";
+import { fontRef, heightRef, widthRef } from "../../../constants/screenSize";
+import { images } from "../../../constants";
+import { showMessage } from "react-native-flash-message";
+import { SvgUri } from "react-native-svg";
 import Iconss from "react-native-vector-icons/dist/Ionicons";
 import Icon from "react-native-vector-icons/dist/MaterialCommunityIcons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PrescriptionScreen = () => {
     const route = useRoute();
-    const { user, condition } = route.params;
+    const { user } = route.params;
+    console.log("userrrrrrrrrrrrrr", user)
+    console.log("userrrrrrrrrrrrrr3333", user?.visits[0].doctor?._id)
+
+
     const navigation = useNavigation();
     // State variables to handle text input
     const [medicines, setMedicines] = useState('');
@@ -33,9 +38,73 @@ const PrescriptionScreen = () => {
     const [success, setSuccess] = useState(false);
     const [data, setData] = useState([]);
     const [selectedLab, setSelectedLab] = useState(null);
+    const [token, setToken] = useState('')
     // const [searchQuery, setSearchQuery] = useState('');
-   console.log('data = ', JSON.stringify(data, null,2))
+    // console.log('data = ', JSON.stringify(data, null, 2))
+    const getDoctorToken = async () => {
+        const token = await AsyncStorage?.getItem("DoctorData")
+        if (token) {
+            const parsedToken = JSON.parse(token);
+            console.log('parsed token: ', parsedToken);
+
+            setToken(parsedToken?.tokens?.access_token)
+            console.log('???????', parsedToken?.tokens?.access_token);
+
+        }
+    }
+
+    const addPrescription = async () => {
+        try {
+            const payload = {
+                data: {
+                    user: user.user_id, // User ObjectId
+                    treatmentStatus: user?.treatmentStatus, // String, either complete or ongoing
+                    diagnosisDate: user?.diagnosisDate, // moment JS unix timestamp
+                    condition: user?.condition, // String
+                    visits: {
+                        visitDate: user.visits[0].visitDate,
+                        doctor: user.visits[0].doctor,
+                        notes: user.visits[0].notes,
+                        prescriptions: user.visits[0].prescriptions,
+                        recommendedTests: user.visits[0].recommendedTests,
+                    },
+                    followUp: {
+                        specialization: user?.followUp.specialization,
+                        subSpecialization: user?.followUp?.subSpecialization,
+                        appointmentType: user?.followUp?.appointmentType,
+                        clinic: user?.followUp?.doctor?.clinic,
+                        clinicLocation: user?.followUp?.doctor?.clinicLocation,
+                        date: user?.followUp?.date,
+                    },
+                }
+            };
+
+            console.log('payload to add', payload.data);
+
+            const res = await fetch("https://api-dev.mhc.doginfo.click/ehr-system", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                    // Add additional headers if required
+                },
+                body: JSON.stringify(payload.data) // Convert payload to JSON string
+            });
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+
+            const data = await res.json();
+            console.log('Response data:', data);
+        } catch (error) {
+            console.error('Error adding prescription:', error);
+        }
+    };
+
+
     useEffect(() => {
+        getDoctorToken();
         // Define an async function to fetch data
         const fetchData = async () => {
             try {
@@ -52,7 +121,7 @@ const PrescriptionScreen = () => {
                 if (response.ok) {
                     // Parse the response data as JSON
                     const result = await response.json();
-                    console.log('Data fetched successfully:', JSON.stringify(result, null, 2));
+                    // console.log('Data fetched successfully:', result);
                     showMessage({
                         message: "Data fetched successfully",
                         type: "success",
@@ -125,7 +194,7 @@ const PrescriptionScreen = () => {
                             <Image source={{ uri: item.image }} style={styles.labImage} resizeMode={'contain'} />
                         )
                     ) : (
-                        <View style={{height:50 * heightRef, width:'100%', backgroundColor:'#007BFF' }}>
+                        <View style={{ height: 50 * heightRef, width: '100%', backgroundColor: '#007BFF' }}>
                             <Image source={images.Account} style={styles.labImage} />
 
                         </View>
@@ -170,9 +239,9 @@ const PrescriptionScreen = () => {
                 </View>
                 <View style={styles.circularBox}>
                     <Image
-                        source={{ uri: user?.profileImg }}
+                        source={{ uri: user?.user?.profileImg }}
                         resizeMode="contain"
-                        style={{ height: 50 * heightRef,  width: 50 * heightRef,  }}
+                        style={{ height: 50 * heightRef, width: 50 * heightRef, }}
                     />
                 </View>
             </View>
@@ -182,7 +251,7 @@ const PrescriptionScreen = () => {
                 <View style={styles.content}>
                     <View style={styles.infoSection}>
                         <Text style={styles.infoText}>Disease : </Text>
-                        <Text style={styles.boldText}>{condition}</Text>
+                        <Text style={styles.boldText}>{user?.condition}</Text>
 
                     </View>
 
@@ -231,7 +300,7 @@ const PrescriptionScreen = () => {
 
                     <FlatList
                         data={data}
-                        contentContainerStyle={{paddingBottom: 20}}
+                        contentContainerStyle={{ paddingBottom: 20 }}
                         keyExtractor={(item) => item._id}
                         renderItem={renderItem}
                     />
@@ -239,7 +308,7 @@ const PrescriptionScreen = () => {
 
                 </View>
 
-                <TouchableOpacity style={styles.sendButton} onPress={()=> handleSendPress()}>
+                <TouchableOpacity style={styles.sendButton} onPress={() => addPrescription()}>
                     <Text style={styles.sendButtonText}>Send</Text>
                 </TouchableOpacity>
 
@@ -286,10 +355,10 @@ const styles = StyleSheet.create({
     },
     labContainer: {
         width: '100%',
-        height:360 * heightRef,
+        height: 360 * heightRef,
         backgroundColor: '#F9F8F8',
         padding: 10 * widthRef,
-        justifyContent:'center',
+        justifyContent: 'center',
         // backgroundColor:'red',
         borderRadius: 10,
         borderWidth: 1,
@@ -365,18 +434,18 @@ const styles = StyleSheet.create({
     },
     infoSection: {
         marginBottom: 20,
-        flexDirection:'row',
-        justifyContent:'space-between'
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     infoText: {
         fontSize: 16,
         marginBottom: 5,
-        color:'black',
-        fontWeight:'bold'
+        color: 'black',
+        fontWeight: 'bold'
     },
     boldText: {
         fontWeight: 'bold',
-        color:'black',
+        color: 'black',
         fontSize: 16,
 
     },
@@ -402,9 +471,9 @@ const styles = StyleSheet.create({
     },
     prescriptionText: {
         fontSize: 16,
-        color:'black',
-        height:50,
-        width:'70%'
+        color: 'black',
+        height: 50,
+        width: '70%'
     },
     labRecommendationHeader: {
         flexDirection: 'row',
@@ -459,7 +528,7 @@ const styles = StyleSheet.create({
     topBar: {
         backgroundColor: "grey",
         height: 45 * heightRef,
-        borderRadius: 15 ,
+        borderRadius: 15,
         flexDirection: "row",
         padding: 10 * heightRef,
         alignItems: "center",
@@ -477,14 +546,14 @@ const styles = StyleSheet.create({
     h1: {
         fontWeight: "bold",
         fontSize: 22 * fontRef,
-        color:'black',
-        marginLeft:10 * widthRef
+        color: 'black',
+        marginLeft: 10 * widthRef
     },
     appBar: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding:10 * heightRef
+        padding: 10 * heightRef
     },
     appBarpatr1: {
         flexDirection: "row",
@@ -492,16 +561,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     container: {
-        width:'100%',
-        height:'100%',
-        flex:1,
+        width: '100%',
+        height: '100%',
+        flex: 1,
         justifyContent: "flex-start",
-        backgroundColor:'white'
+        backgroundColor: 'white'
     },
     circularBox: {
         width: 50 * heightRef,
         height: 50 * heightRef,
-        overflow:'hidden',
+        overflow: 'hidden',
         backgroundColor: 'blue',
         borderRadius: 50,
     },

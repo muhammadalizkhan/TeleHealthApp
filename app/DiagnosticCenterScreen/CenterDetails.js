@@ -1,5 +1,5 @@
 // DiagnosticCenterDetail.js
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -10,22 +10,23 @@ import {
     Modal,
     Pressable,
     TextInput,
-    Dimensions
+    Dimensions,
+    Alert
 } from 'react-native';
-import {SvgUri} from "react-native-svg";
+import { SvgUri } from "react-native-svg";
 
 import Icons from "react-native-vector-icons/dist/Ionicons";
-import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
-import {useNavigation} from "@react-navigation/native";
-import {showMessage} from "react-native-flash-message";
+import { fontRef, heightRef, widthRef } from "../../constants/screenSize";
+import { useNavigation } from "@react-navigation/native";
+import { showMessage } from "react-native-flash-message";
 import Iconss from "react-native-vector-icons/dist/Ionicons";
-import {images} from "../../constants";
+import { images } from "../../constants";
 import Icon from "react-native-vector-icons/dist/MaterialCommunityIcons";
 
 const DiagnosticCenterDetail = ({ route }) => {
     const { data } = route.params;
 
-    const  navigation = useNavigation();
+    const navigation = useNavigation();
     console.log('item: ======== ', JSON.stringify(data, null, 2));
     const [modalVisible, setModalVisible] = useState(false);
     const [test, setTest] = useState([]);
@@ -114,8 +115,10 @@ const DiagnosticCenterDetail = ({ route }) => {
 
                         }}
                     >
-                    <Image source={{ uri: item.image }} style={{width:100 * heightRef, height:100 * heightRef,
-                    borderRadius:50 * heightRef}} resizeMode={'contain'} />
+                        <Image source={{ uri: item.image }} style={{
+                            width: 100 * heightRef, height: 100 * heightRef,
+                            borderRadius: 50 * heightRef
+                        }} resizeMode={'contain'} />
                     </View>
                 )
             ) : (
@@ -145,18 +148,28 @@ const DiagnosticCenterDetail = ({ route }) => {
             </View>
             <View style={styles.infoItem}>
                 <Iconss name={'pricetag-outline'} size={20 * fontRef} color={'#007BFF'} />
-                <Text style={[styles.infoText,{fontSize: 20 * fontRef, fontWeight:'bold', color: 'black'}]}>Price ${item.price}</Text>
+                <Text style={[styles.infoText, { fontSize: 20 * fontRef, fontWeight: 'bold', color: 'black' }]}>Price ${item.price}</Text>
             </View>
 
-            <TouchableOpacity style={{width : '30%', alignSelf:'center'  ,
-                height:'13%', backgroundColor: '#007BFF', padding: 10,
-                borderRadius: 30, marginTop: 10, justifyContent:'center'  }} onPress={ ()=> handleBookTestPress(item)}>
+            <TouchableOpacity style={{
+                width: '30%', alignSelf: 'center',
+                height: '13%', backgroundColor: '#007BFF', padding: 10,
+                borderRadius: 30, marginTop: 10, justifyContent: 'center'
+            }} onPress={() => handleBookTestPress(item)}>
 
-                <Text style={{color: 'white', textAlign: 'center', fontSize: 14 * fontRef , fontWeight:'bold'}}>Book Test</Text>
+                <Text style={{ color: 'white', textAlign: 'center', fontSize: 14 * fontRef, fontWeight: 'bold' }}>Book Test</Text>
             </TouchableOpacity>
         </View>
     );
+    const handleNextPress = () => {
+        if (!selectedBranchId) {
+            return Alert.alert('Please select a branch')
+        } else {
+            setModalVisible(false);
+            navigation.navigate('submitBooking', { data: selectedTest });
+        }
 
+    }
 
     return (
         <View style={styles.container}>
@@ -172,7 +185,7 @@ const DiagnosticCenterDetail = ({ route }) => {
 
                 <FlatList
                     data={test}
-                    contentContainerStyle={{paddingBottom: 20}}
+                    contentContainerStyle={{ paddingBottom: 20 }}
                     keyExtractor={(item) => item._id}
                     renderItem={renderItem}
                 />
@@ -224,9 +237,9 @@ const DiagnosticCenterDetail = ({ route }) => {
                                             onPress={() => handleBranchSelect(item._id)}
                                         >
                                             <Text style={[styles.branchText,
-                                                item._id === selectedBranchId && styles.selectedText]}>{item.completeAddress}</Text>
+                                            item._id === selectedBranchId && styles.selectedText]}>{item.completeAddress}</Text>
                                             <Text style={[styles.branchText,
-                                                item._id === selectedBranchId && styles.selectedText]}>{item.phone}</Text>
+                                            item._id === selectedBranchId && styles.selectedText]}>{item.phone}</Text>
                                         </TouchableOpacity>
                                     )}
                                 />
@@ -238,10 +251,7 @@ const DiagnosticCenterDetail = ({ route }) => {
                         <Pressable
                             style={[styles.buttonClose]}
 
-                            onPress={() => {
-                                setModalVisible(false);
-                                navigation.navigate('submitBooking', { data: selectedTest });
-                            }}
+                            onPress={() => { handleNextPress() }}
                         >
                             <Text style={styles.textStyle}>Next</Text>
                         </Pressable>
@@ -264,15 +274,15 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20 * fontRef,
         fontWeight: 'bold',
-        marginLeft:8 * widthRef,
-        color:'black',
+        marginLeft: 8 * widthRef,
+        color: 'black',
         marginBottom: 10 * heightRef,
     },
     labContainer: {
         width: '100%',
-        height:350 * heightRef,
+        height: 350 * heightRef,
         backgroundColor: 'white',
-        justifyContent:'center',
+        justifyContent: 'center',
         padding: 10 * widthRef,
         // backgroundColor:'red',
         borderRadius: 10,
@@ -302,12 +312,12 @@ const styles = StyleSheet.create({
         color: '#8A8A8E',
         marginLeft: 5 * widthRef,
     },
-    price:{
+    price: {
         fontSize: 16 * fontRef,
         color: '#007BFF',
-        fontWeight : 'bold',
+        fontWeight: 'bold',
     },
-    images:{
+    images: {
         width: "100%",
         height: 110 * heightRef,
         borderRadius: 10,
@@ -353,7 +363,7 @@ const styles = StyleSheet.create({
         width: '40%',
         borderRadius: 10,
         height: 40 * heightRef,
-        alignSelf:'flex-end',
+        alignSelf: 'flex-end',
         justifyContent: 'center',
     },
     textStyle: {

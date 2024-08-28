@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
     View,
     Text,
@@ -11,25 +11,28 @@ import {
     ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import { fontRef, heightRef, widthRef } from '../../constants/screenSize';
-import {AuthContext} from "../../context/Authcontext";
-import {useCreatePaymentIntentMutation} from "../../store/apislice";
+import { AuthContext } from "../../context/Authcontext";
+import { useCreatePaymentIntentMutation } from "../../store/apislice";
 import moment from "moment/moment";
-import {useStripe} from "@stripe/stripe-react-native";
-import {showMessage} from "react-native-flash-message";
+import { useStripe } from "@stripe/stripe-react-native";
+import { showMessage } from "react-native-flash-message";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SubmitBooking = ({route}) => {
+const SubmitBooking = ({ route }) => {
 
     const { data } = route.params;
     // console.log('Data:', JSON.stringify(data, null, 2));
     const navigation = useNavigation();
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [selectedOption, setSelectedOption] = useState('');
+    console.log('selected option', selectedDate);
+
     const [address, setAddress] = useState('');
     const [availability, setAvailability] = useState('');
-    // console.log('available slot', availability)
+    console.log('available slot', availability)
     const [isOptionDropdownVisible, setIsOptionDropdownVisible] = useState(false);
     const [isAvailabilityDropdownVisible, setIsAvailabilityDropdownVisible] = useState(false);
     const todayDate = new Date().toISOString().split('T')[0];
@@ -50,7 +53,7 @@ const SubmitBooking = ({route}) => {
     const url = 'https://api-dev.mhc.doginfo.click/diagnostic-center/lab-test/booking';
     const urlPayment = 'https://api-dev.mhc.doginfo.click/initiate-payment';
 
-/// doctor -> steven
+    /// doctor -> steven
 
 
 
@@ -109,12 +112,12 @@ const SubmitBooking = ({route}) => {
 
     const paymentData = {
 
-        product : 'Lab Test',
-        userId : userData?.user?._id,
+        product: 'Lab Test',
+        userId: userData?.user?._id,
         testBookingDetails: {
             bookingDetails,
             dgCenter: data?.center?.centerName,
-            test:data,
+            test: data,
             branch: data?.branches[0],
 
         }
@@ -130,13 +133,49 @@ const SubmitBooking = ({route}) => {
     }
 
     // console.log('payment data = ', JSON.stringify(paymentData, null, 2))
+    const saveDurationAndDate = async () => {
+        try {
+            const data = {
+                selectedTime: selectedDate,
+                date: availability,
+            };
+            await AsyncStorage.setItem('scheduleBooking', JSON.stringify(data));
+            console.log('Data saved successfully');
+        } catch (error) {
+            console.error('Failed to save the data to Async Storage', error);
+        }
+    };
 
+    const checkAlreadyAppoint = async () => {
 
+        try {
+            const jsonValue = await AsyncStorage.getItem('scheduleBooking');
+            if (jsonValue != null) {
+                const data = JSON.parse(jsonValue);
+                if (data.selectedTime === selectedDate && data.date === availability) {
+                    Alert.alert('Duplicate Entry', 'The selected date and time already exists.');
+                } else {
+                    await saveDurationAndDate();
+                    makePayments();
+                    // Replace 'NextScreen' with your screen name
+                }
+            } else {
+                await saveDurationAndDate();
+                makePayments();
+
+            }
+        } catch (error) {
+            console.error('Failed to retrieve the data from Async Storage', error);
+        }
+    }
     const makePayments = async () => {
+        if (!availability || !selectedOption || !address) {
+            return Alert.alert('Please provide all required information')
+        }
         // console.log('clicked')
         setLoading(true)
         // console.log('payment data ' , JSON.stringify(paymentData, null, 2))
-        console.log("userData?.tokens?.access_token",userData?.tokens?.access_token)
+        console.log("userData?.tokens?.access_token", userData?.tokens?.access_token)
         try {
 
             const response = await fetch(urlPayment, {
@@ -162,9 +201,9 @@ const SubmitBooking = ({route}) => {
             const result = await response.json();
             console.log('payment result = ', JSON.stringify(result, null, 2));
             setClientSecret(result.paymentDetails.stripeClientSecret)
-            const checkoutSucceeded =  await onCheckout(result.paymentDetails.stripeClientSecret)
+            const checkoutSucceeded = await onCheckout(result.paymentDetails.stripeClientSecret)
 
-            if(checkoutSucceeded)
+            if (checkoutSucceeded)
                 await bookAppointment(result.paymentDetails.stripeClientSecret);
 
             setLoading(false);
@@ -181,7 +220,7 @@ const SubmitBooking = ({route}) => {
     };
 
     // console.log('appoinment details = ', JSON.stringify(appointmentData, null,2));
-    {/* Edited by Yaseen */}
+    {/* Edited by Yaseen */ }
     const bookAppointment = async (clientSecret) => {
         // console.log('clicked')
         setLoading(true)
@@ -214,7 +253,7 @@ const SubmitBooking = ({route}) => {
                 [
                     {
                         text: "OK",
-                        onPress: () => { navigation.goBack() }
+                        onPress: () => { navigation.navigate('parentscreen') }
 
                         // router.push('schedule/index1')
                     }
@@ -235,9 +274,9 @@ const SubmitBooking = ({route}) => {
     };
 
 
-    {/* Edited by Yaseen */}
+    {/* Edited by Yaseen */ }
     const onCheckout = async (clientSecret) => {
-        console.log( 'client secret = ' , clientSecret)
+        console.log('client secret = ', clientSecret)
         let Succeeded = false;
         try {
 
@@ -272,7 +311,7 @@ const SubmitBooking = ({route}) => {
                     [
                         {
                             text: "OK",
-                            onPress: () => { navigation.navigate("parent-screen") }
+                            onPress: () => { navigation.navigate("parentscreen") }
 
                             // router.push('schedule/index1')
                         }
@@ -339,64 +378,64 @@ const SubmitBooking = ({route}) => {
                 <Text style={styles.title}>{data?.testName}</Text>
             </View>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false} style={styles.container}>
-            <View style={styles.main}>
-                <Text style={styles.label}>Select Test Date</Text>
-                <Calendar
-                    current={selectedDate}
-                    minDate={todayDate}
-                    markedDates={{
-                        [selectedDate]: { selected: true, selectedColor: '#007BFF' },
-                    }}
-                    onDayPress={(day) => setSelectedDate(day.dateString)}
-                />
-                <Text style={styles.label}>Test Conducted At</Text>
-                <TouchableOpacity style={styles.pickerContainer} onPress={() => setIsOptionDropdownVisible(!isOptionDropdownVisible)}>
-                    <Text style={styles.pickerText}>{selectedOption || "Select Option"}</Text>
-                    <Icons name={'chevron-down'} size={20 * fontRef} color="gray" />
-                </TouchableOpacity>
-                {isOptionDropdownVisible && (
-                    <View style={styles.dropdown}>
-                        {options.map((option, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={styles.dropdownItem}
-                                onPress={() => handleOptionSelect(option)}
-                            >
-                                <Text style={styles.dropdownItemText}>{option}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                )}
-                <Text style={[styles.label,{marginTop:10}]}>Booking Details</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Please add your address"
-                    placeholderTextColor="#DAD9D9"
-                    onChangeText={(text) => setAddress(text)}
-                    value={address}
-                />
-                <TouchableOpacity style={styles.pickerContainer} onPress={() => setIsAvailabilityDropdownVisible(!isAvailabilityDropdownVisible)}>
-                    <Text style={styles.pickerText}>{availability || "Please add your availability"}</Text>
-                    <Icons name={'chevron-down'} size={20 * fontRef} color="gray" />
-                </TouchableOpacity>
-                {isAvailabilityDropdownVisible && (
-                    <View style={styles.dropdown}>
-                        {timeSlots.map((slot, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={styles.dropdownItem}
-                                onPress={() => handleAvailabilitySelect(slot)}
-                            >
-                                <Text style={styles.dropdownItemText}>{slot}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                )}
-                <TouchableOpacity style={styles.button} onPress={() => {makePayments()}}>
-                    {!loading &&<Text style={styles.buttonText}>Book Now</Text>}
-                    {loading && <ActivityIndicator  size={"small"} color={'white'}/> }
-                </TouchableOpacity>
-            </View>
+                <View style={styles.main}>
+                    <Text style={styles.label}>Select Test Date</Text>
+                    <Calendar
+                        current={selectedDate}
+                        minDate={todayDate}
+                        markedDates={{
+                            [selectedDate]: { selected: true, selectedColor: '#007BFF' },
+                        }}
+                        onDayPress={(day) => setSelectedDate(day.dateString)}
+                    />
+                    <Text style={styles.label}>Test Conducted At</Text>
+                    <TouchableOpacity style={styles.pickerContainer} onPress={() => setIsOptionDropdownVisible(!isOptionDropdownVisible)}>
+                        <Text style={styles.pickerText}>{selectedOption || "Select Option"}</Text>
+                        <Icons name={'chevron-down'} size={20 * fontRef} color="gray" />
+                    </TouchableOpacity>
+                    {isOptionDropdownVisible && (
+                        <View style={styles.dropdown}>
+                            {options.map((option, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.dropdownItem}
+                                    onPress={() => handleOptionSelect(option)}
+                                >
+                                    <Text style={styles.dropdownItemText}>{option}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+                    <Text style={[styles.label, { marginTop: 10 }]}>Booking Details</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Please add your address"
+                        placeholderTextColor="#DAD9D9"
+                        onChangeText={(text) => setAddress(text)}
+                        value={address}
+                    />
+                    <TouchableOpacity style={styles.pickerContainer} onPress={() => setIsAvailabilityDropdownVisible(!isAvailabilityDropdownVisible)}>
+                        <Text style={styles.pickerText}>{availability || "Please add your availability"}</Text>
+                        <Icons name={'chevron-down'} size={20 * fontRef} color="gray" />
+                    </TouchableOpacity>
+                    {isAvailabilityDropdownVisible && (
+                        <View style={styles.dropdown}>
+                            {timeSlots.map((slot, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.dropdownItem}
+                                    onPress={() => handleAvailabilitySelect(slot)}
+                                >
+                                    <Text style={styles.dropdownItemText}>{slot}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+                    <TouchableOpacity style={styles.button} onPress={() => { checkAlreadyAppoint() }}>
+                        {!loading && <Text style={styles.buttonText}>Book Now</Text>}
+                        {loading && <ActivityIndicator size={"small"} color={'white'} />}
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

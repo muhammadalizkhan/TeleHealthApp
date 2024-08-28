@@ -9,7 +9,7 @@ import Iconss from 'react-native-vector-icons/dist/Ionicons';
 import { AuthContext } from '../../context/Authcontext';
 import { StackActions } from '@react-navigation/native';
 import { getAllDoctors, getDoctorBySpecialityIds, getSpecialist } from '../../constants/APi';
-import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+import { fontRef, heightRef, widthRef } from "../../constants/screenSize";
 
 
 
@@ -136,81 +136,85 @@ const HomeScreen = ({ navigation }) => {
     return (
 
         <SafeAreaView>
-            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{flexGrow:1}}>
+            <ScrollView nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }}>
 
 
-            <View style={[styles.container, { justifyContent: 'space-around' }]}>
+                <View style={[styles.container, { justifyContent: 'space-around' }]}>
 
 
 
-                <View style={styles.searchContainer}>
-                    <View style={styles.input}>
+                    <View style={styles.searchContainer}>
+                        <View style={styles.input}>
 
 
-                        <TextInput
-                            style={{ marginLeft: 10 * widthRef, width: '88%', fontSize: 16 * fontRef, color: 'black' }}
-                            onChangeText={handleSearch}
-                            value={inputText}
-                            placeholder="Search Specialist"
-                            placeholderTextColor={'#DAD9D9'}
-                        />
+                            <TextInput
+                                style={{ marginLeft: 10 * widthRef, width: '88%', fontSize: 16 * fontRef, color: 'black' }}
+                                onChangeText={handleSearch}
+                                value={inputText}
+                                placeholder="Search Specialist"
+                                placeholderTextColor={'#DAD9D9'}
+                            />
 
 
                             <Iconss name={'search'} size={25} color={'#DAD9D9'} />
 
+                        </View>
+
+                        <TouchableOpacity style={{
+                            marginLeft: 12, backgroundColor: '#1877F2',
+                            marginBottom: 10, borderRadius: 8,
+                            padding: 0, width: 48, height: 48, justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                            onPress={() => navigation.openDrawer()}>
+                            <Iconss name={'menu'} size={35} color={'white'} />
+
+                        </TouchableOpacity>
+
                     </View>
 
-                    <TouchableOpacity style={{marginLeft:12, backgroundColor:'#1877F2',
-                                       marginBottom:10, borderRadius:8,
-                        padding:0, width:48, height:48, justifyContent:'center',
-                        alignItems:'center'}}
-                               onPress={() => navigation.openDrawer()}>
-                        <Iconss name={'menu'} size={35} color={'white'}  />
 
-                    </TouchableOpacity>
+                    <View style={styles.heading}>
+                        <Text style={styles.text2}>Get Appointments</Text>
+                    </View>
 
-                </View>
+                    <View style={styles.des}>
+                        <FlatList
+                            horizontal
+                            data={topSpecialists}
+                            nestedScrollEnabled={true}
 
-
-                <View style={styles.heading}>
-                    <Text style={styles.text2}>Get Appointments</Text>
-                </View>
-
-                <View style={styles.des}>
-                    <FlatList
-                        horizontal
-                        data={topSpecialists }
-                        nestedScrollEnabled={true}
-
-                        renderItem={({ item }) => (
-                            <View style={styles.appointmentItem}>
-                                <ImageBackground source={images.Card} resizeMode='cover' style={{ width: '100%', height: 125 * heightRef }}>
-                                    {/* Render image with absolute positioning */}
-                                    {/* <Image
+                            renderItem={({ item }) => (
+                                <View style={styles.appointmentItem}>
+                                    <ImageBackground source={images.Card} resizeMode='cover' style={{ width: '100%', height: 125 * heightRef }}>
+                                        {/* Render image with absolute positioning */}
+                                        {/* <Image
                                         source={images.doctorCard}
                                         style={[styles.image, styles.absoluteImage, { resizeMode: 'cover', marginTop: 5 }]}
                                     /> */}
-                                    <View style={{width:140 * heightRef, height:140 * heightRef, borderWidth:0,borderColor:'white',
-                                        position:'absolute', bottom:-1.5, right:5, justifyContent:'center',
-                                        alignItems:'center'
-                                    }}>
-                                    <Image
-                                        source={{ uri: item.profileImg }}
+                                        <View style={{
+                                            width: 140 * heightRef, height: 140 * heightRef, borderWidth: 0, borderColor: 'white',
+                                            position: 'absolute', bottom: -1.5, right: 5, justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                            <Image
+                                                source={{ uri: item.profileImg }}
 
 
-                                    />
-                                        { item?.profileImg ?
-                                            <Image source={{uri: item.profileImg}}
-                                                   style={[styles.image,  ]}
                                             />
-                                            :
-                                            <Image source={images.doctorLogo}
-                                                   style={[styles.image,  ]}
-                                            />
-                                        }
-                                    </View>
+                                            {item?.profileImg ?
+                                                <Image source={{ uri: item.profileImg }}
+                                                    style={[styles.image,]}
+                                                />
+                                                :
+                                                <Image source={images.doctorLogo}
+                                                    style={[styles.image,]}
+                                                />
+                                            }
+                                        </View>
 
 
+<<<<<<< Updated upstream
                                     {/* Other content */}
                                     <Text style={styles.t1}>{item.firstName} {item.lastName}</Text>
                                     <Text style={styles.t2}>{item.speciality[0]?.specialization?.name}</Text>
@@ -230,62 +234,101 @@ const HomeScreen = ({ navigation }) => {
                         keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
+=======
+                                        {/* Other content */}
+                                        <Text style={styles.t1}>{item.firstName} {item.lastName}</Text>
+                                        <Text style={styles.t2}>{item?.speciality[0]?.specialization?.name}</Text>
+                                        <Text style={styles.t3}>500+ points</Text>
+                                        <TouchableOpacity style={styles.contain1}
+                                            onPress={() => {
+                                                navigation.navigate('doctor-profile', {
+                                                    data: item
+                                                });
+                                            }}>
+                                            <Iconss name="add-circle" size={24 * fontRef} color="#9ccaff" />
+                                            <Text style={styles.t5}> Appoint</Text>
+                                        </TouchableOpacity>
+                                    </ImageBackground>
+                                </View>
+                            )}
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    </View>
+>>>>>>> Stashed changes
 
 
-                <View style={styles.heading1}>
-                    <Text style={styles.text2}>Top Specialist</Text>
-                </View>
+                    <View style={styles.heading1}>
+                        <Text style={styles.text2}>Top Specialist</Text>
+                    </View>
 
-                <View style={styles.des1}>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        <View style={styles.subSpecializationContainer}>
-                            {appointments.map(item =>
+                    <View style={styles.des1}>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            <View style={styles.subSpecializationContainer}>
+                                {appointments.map(item =>
 
                                     <TouchableOpacity
                                         key={item._id}
-                                         onPress={() => {
-                                        setSelectedItem(item);
-                                        getDoctorsBySid(item._id);
-                                    }}
+                                        onPress={() => {
+                                            setSelectedItem(item);
+                                            getDoctorsBySid(item._id);
+                                        }}
                                         style={[
                                             styles.contain,
                                             selectedItem?.name === item.name && { borderColor: '#1877F2' },
                                         ]}
                                     >
-                                        <Text style={{ color: selectedItem?.name === item.name ? '#1877F2' : 'lightgrey',
-                                            fontWeight:'600'
-                                         }}>
+                                        <Text style={{
+                                            color: selectedItem?.name === item.name ? '#1877F2' : 'lightgrey',
+                                            fontWeight: '600'
+                                        }}>
                                             {item.name}
                                         </Text>
                                     </TouchableOpacity>
 
-                            )}
-                        </View>
-                    </ScrollView>
-                </View>
-
-                <FlatList
-                    data={filteredDoctors}
-                    nestedScrollEnabled={true}
-                    renderItem={({ item }) => (
-                        <View style={styles.appointmentItem1}>
-                            <View style={styles.image1}>
-                                { item?.profileImg ?
-                                    <Image source={{uri: item.profileImg}}
-                                        style={{
-                                            width: 110 * heightRef,
-                                            height: 110 * heightRef,
-                                            borderRadius: 24 * heightRef
-                                        }}/>
-                                :
-                                    <Image source={images.doctorLogo}
-                                           style={{
-                                               width: 110 * heightRef,
-                                               height: 110 * heightRef,
-                                               borderRadius: 24 * heightRef
-                                           }}/>
-                                }
+                                )}
                             </View>
+                        </ScrollView>
+                    </View>
+
+                    <FlatList
+                        data={filteredDoctors}
+                        nestedScrollEnabled={true}
+                        renderItem={({ item }) => (
+                            <View style={styles.appointmentItem1}>
+                                <View style={styles.image1}>
+                                    {item?.profileImg ?
+                                        <Image source={{ uri: item.profileImg }}
+                                            style={{
+                                                width: 110 * heightRef,
+                                                height: 110 * heightRef,
+                                                borderRadius: 24 * heightRef
+                                            }} />
+                                        :
+                                        <Image source={images.doctorLogo}
+                                            style={{
+                                                width: 110 * heightRef,
+                                                height: 110 * heightRef,
+                                                borderRadius: 24 * heightRef
+                                            }} />
+                                    }
+                                </View>
+                                <View style={styles.contain2}>
+                                    <Text style={styles.h1}>{item.firstName} {item.lastName}</Text>
+                                    <Text style={styles.h2}>{item?.speciality[0]?.specialization?.name}</Text>
+                                    <Text style={styles.h2}>Mon-Fri | 9:00 Am to 5:00 Pm</Text>
+                                    <TouchableOpacity
+                                        style={styles.buttonContainer}
+                                        onPress={() => {
+                                            navigation.navigate('doctor-profile', {
+                                                data: item
+                                            });
+                                        }}
+                                    >
+                                        <Text style={styles.buttonText}>Consult</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+<<<<<<< Updated upstream
                             <View style={styles.contain2}>
                                 <Text style={styles.h1}>{item.firstName} {item.lastName}</Text>
                                 <Text style={styles.h2}>{item.speciality[0]?.specialization?.name}</Text>
@@ -307,6 +350,13 @@ const HomeScreen = ({ navigation }) => {
                     contentContainerStyle={{ paddingBottom: 30 }}
                 />
             </View>
+=======
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                        contentContainerStyle={{ paddingBottom: 30 }}
+                    />
+                </View>
+>>>>>>> Stashed changes
 
             </ScrollView>
         </SafeAreaView>
@@ -396,7 +446,7 @@ const styles = StyleSheet.create({
     des1: {
 
         marginLeft: 15 * widthRef,
-        width:'100%',
+        width: '100%',
     },
     des: {
         height: 160 * heightRef,
@@ -431,8 +481,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '85%'    ,
-        alignSelf:'flex-start',
+        width: '85%',
+        alignSelf: 'flex-start',
         paddingLeft: 15 * widthRef,
         paddingRight: 15 * widthRef,
     },
@@ -492,7 +542,7 @@ const styles = StyleSheet.create({
         width: 110 * heightRef,
         height: 110 * heightRef,
         borderWidth: 1,
-        borderColor:  "#DAD9D9",
+        borderColor: "#DAD9D9",
         borderRadius: 24 * heightRef,
         justifyContent: 'center',
         alignItems: 'center',
@@ -507,7 +557,7 @@ const styles = StyleSheet.create({
         borderColor: "#DAD9D9",
         margin: 10 * heightRef,
         marginLeft: 10 * widthRef,
-        marginBottom: 5     * heightRef,
+        marginBottom: 5 * heightRef,
         borderRadius: 24 * heightRef,
         width: Dimensions.get('window').width - 22,
         height: 130 * heightRef,
@@ -528,33 +578,33 @@ const styles = StyleSheet.create({
     },
 
 });
-{/*<View style={styles.top}>*/}
-{/*    <Pressable >*/}
-{/*        <Image*/}
-{/*            source={images.Menu}*/}
-{/*            style={{ height: 35, width: 35 }}*/}
-{/*        />*/}
-{/*    </Pressable>*/}
+{/*<View style={styles.top}>*/ }
+{/*    <Pressable >*/ }
+{/*        <Image*/ }
+{/*            source={images.Menu}*/ }
+{/*            style={{ height: 35, width: 35 }}*/ }
+{/*        />*/ }
+{/*    </Pressable>*/ }
 
-{/*    <View style={{*/}
-{/*        flexDirection: 'row', width: 190, backgroundColor: '#F3F3F3',*/}
-{/*        marginLeft: 20, borderRadius: 20,*/}
-{/*        height: 46, alignItems: 'center',*/}
-{/*        paddingHorizontal: 10*/}
-{/*    }}>*/}
-{/*        <Icons name={'location-pin'} size={25} color={'black'} />*/}
-{/*        <Text style={{ fontSize: 14, color: 'black', fontWeight: '600', marginLeft: 10, marginRight: 40 }}>Sargodha</Text>*/}
-{/*        <Icons name={'chevron-down'} size={25} color={'black'} />*/}
-{/*    </View>*/}
-{/*    <View style={{ flexDirection: 'row', width: '34%', justifyContent: 'flex-end', marginTop: 5 }}>*/}
-{/*        <Image*/}
-{/*            source={images.Bell}*/}
-{/*            style={{ height: 32, width: 32 }}*/}
-{/*        />*/}
-{/*        <Image*/}
-{/*            source={images.Cart}*/}
-{/*            resizeMode='contain'*/}
-{/*            style={{ height: 30, width: 30, marginLeft: 10 }}*/}
-{/*        />*/}
-{/*    </View>*/}
-{/*</View>*/}
+{/*    <View style={{*/ }
+{/*        flexDirection: 'row', width: 190, backgroundColor: '#F3F3F3',*/ }
+{/*        marginLeft: 20, borderRadius: 20,*/ }
+{/*        height: 46, alignItems: 'center',*/ }
+{/*        paddingHorizontal: 10*/ }
+{/*    }}>*/ }
+{/*        <Icons name={'location-pin'} size={25} color={'black'} />*/ }
+{/*        <Text style={{ fontSize: 14, color: 'black', fontWeight: '600', marginLeft: 10, marginRight: 40 }}>Sargodha</Text>*/ }
+{/*        <Icons name={'chevron-down'} size={25} color={'black'} />*/ }
+{/*    </View>*/ }
+{/*    <View style={{ flexDirection: 'row', width: '34%', justifyContent: 'flex-end', marginTop: 5 }}>*/ }
+{/*        <Image*/ }
+{/*            source={images.Bell}*/ }
+{/*            style={{ height: 32, width: 32 }}*/ }
+{/*        />*/ }
+{/*        <Image*/ }
+{/*            source={images.Cart}*/ }
+{/*            resizeMode='contain'*/ }
+{/*            style={{ height: 30, width: 30, marginLeft: 10 }}*/ }
+{/*        />*/ }
+{/*    </View>*/ }
+{/*</View>*/ }

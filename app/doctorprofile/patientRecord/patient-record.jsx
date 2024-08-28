@@ -5,7 +5,7 @@ import PatientRecordComponent from './component/patient-record-component';
 import Icons from 'react-native-vector-icons/dist/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
-import {fontRef, heightRef, widthRef} from "../../../constants/screenSize";
+import { fontRef, heightRef, widthRef } from "../../../constants/screenSize";
 
 const PatientRecord = ({ navigation }) => {
   const [inputText, setInputText] = useState('');
@@ -122,6 +122,7 @@ const PatientRecord = ({ navigation }) => {
           type: 'info',
         });
       } else {
+        console.log('get user data by doctor id on patient record screen', result)
         setUserRecords(result);
         showMessage({
           message: "Records fetched successfully",
@@ -140,23 +141,24 @@ const PatientRecord = ({ navigation }) => {
   };
 
 
-  console.log('doctorData ', JSON.stringify(userRecords, null,2))
+  console.log('doctorData ', JSON.stringify(userRecords, null, 2))
 
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('patient-detail', { user: item.user, condition: item.condition })}>
+      <TouchableOpacity onPress={() => navigation.navigate('patient-detail', { user: item })}>
+        {/* { user: item.user, condition: item.condition } */}
         <View style={styles.inner}>
           <View>
             <Text style={styles.name}>
               {`${item?.user?.firstName || ''} ${item?.user?.lastName || ''}`}
             </Text>
-            <Text style={styles.disease}>Condition: <Text style={[styles.disease, {fontWeight: '400',  color: 'grey'}]}> {item.condition}</Text> </Text>
+            <Text style={styles.disease}>Condition: <Text style={[styles.disease, { fontWeight: '400', color: 'grey' }]}> {item.condition}</Text> </Text>
             <Text style={styles.gender}>Gender: <Text style={[styles.gender, {
-              fontWeight: '400',  color: 'grey'
+              fontWeight: '400', color: 'grey'
             }]}>{item?.user?.gender}</Text></Text>
             <View style={styles.spacer}></View>
             <View style={styles.details}>
-              <Text style={{color:'white', fontSize:14 * fontRef, fontWeight:'500'}}>Check Details!</Text>
+              <Text style={{ color: 'white', fontSize: 14 * fontRef, fontWeight: '500' }}>Check Details!</Text>
             </View>
           </View>
           <Image
@@ -218,22 +220,22 @@ const PatientRecord = ({ navigation }) => {
 
         {/* <View style={styles.spacer} /> */}
 
-        <Text style={{ fontWeight: "bold", color:'black', marginBottom: 10 * heightRef, marginTop: 0, fontSize: 17 * fontRef }}>Patient List</Text>
+        <Text style={{ fontWeight: "bold", color: 'black', marginBottom: 10 * heightRef, marginTop: 0, fontSize: 17 * fontRef }}>Patient List</Text>
 
 
 
-       {loading ? (
-        <ActivityIndicator size={'large'} color={'blue'}/>
-      ) : (
-        <FlatList
-          data={userRecords}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingBottom:200}}
-          // style={{paddingBottom:200}}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-        />
-      )}
+        {loading ? (
+          <ActivityIndicator size={'large'} color={'blue'} />
+        ) : (
+          <FlatList
+            data={userRecords}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 200 }}
+            // style={{paddingBottom:200}}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+          />
+        )}
 
 
 
@@ -322,14 +324,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     borderWidth: 1,
-    marginBottom: 10  * heightRef,
+    marginBottom: 10 * heightRef,
     paddingHorizontal: 10 * widthRef,
     borderRadius: 10,
   },
   inner: {
     height: 150 * heightRef,
     width: '98%',
-    alignSelf:'center',
+    alignSelf: 'center',
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20 * heightRef,
@@ -339,8 +341,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     // Shadow for iOS
     shadowColor: '#000',
-    borderWidth:1,
-    borderColor:'#DAD9D9',
+    borderWidth: 1,
+    borderColor: '#DAD9D9',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -350,7 +352,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22 * fontRef,
     fontWeight: 'bold',
-    color:'black'
+    color: 'black'
   },
   disease: {
     color: 'black',
@@ -360,7 +362,7 @@ const styles = StyleSheet.create({
   gender: {
     fontWeight: 'bold',
     color: 'black',
-    fontSize : 15 * fontRef,
+    fontSize: 15 * fontRef,
   },
 
   details: {
@@ -374,6 +376,6 @@ const styles = StyleSheet.create({
   image: {
     height: 100 * heightRef,
     width: 100 * heightRef,
-    borderRadius:16
+    borderRadius: 16
   },
 });

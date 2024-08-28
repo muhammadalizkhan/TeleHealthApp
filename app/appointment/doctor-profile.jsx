@@ -6,14 +6,14 @@ import { Icons, images } from "../../constants";
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import Iconss from 'react-native-vector-icons/dist/Ionicons';
-import {fontRef, heightRef, widthRef} from "../../constants/screenSize";
+import { fontRef, heightRef, widthRef } from "../../constants/screenSize";
 
 const DoctorProfile = () => {
     const navigation = useNavigation();
     const route = useRoute();
     // const { name, description } = route.query;
     const { data } = route.params;
-    console.log('data ', JSON.stringify(data, null,2 ))
+    console.log('data ', JSON.stringify(data, null, 2))
     const [expanded, setExpanded] = useState(false);
 
     const toggleDescription = () => {
@@ -30,13 +30,15 @@ const DoctorProfile = () => {
 
 
 
-                    <View style={{ height: 270 * heightRef, width: 270 * widthRef,
-                        justifyContent: "center", alignItems: "center" ,
-                        backgroundColor:'white', borderRadius:16, marginBottom:10}}>
+                    <View style={{
+                        height: 270 * heightRef, width: 270 * widthRef,
+                        justifyContent: "center", alignItems: "center",
+                        backgroundColor: 'white', borderRadius: 16, marginBottom: 10
+                    }}>
 
 
                         <Image
-                           source={{ uri: data.profileImg }}
+                            source={{ uri: data.profileImg }}
                             resizeMode="cover"
 
                             style={{
@@ -60,12 +62,16 @@ const DoctorProfile = () => {
 
                                     <View style={styles.cont}>
                                         <Text style={styles.t1}>{data.firstName} {data.lastName}</Text>
+<<<<<<< Updated upstream
                                         <Text style={styles.t2}>{data.speciality?.[0]?.specialization?.name}</Text>
+=======
+                                        <Text style={styles.t2}>{data?.speciality[0]?.specialization?.name}</Text>
+>>>>>>> Stashed changes
                                     </View>
 
                                     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
 
-                                        <Text style={{ fontSize: 25 * fontRef, fontWeight: 'bold', color:'grey' }}>4.5 </Text>
+                                        <Text style={{ fontSize: 25 * fontRef, fontWeight: 'bold', color: 'grey' }}>4.5 </Text>
 
                                         <Image
                                             source={images?.star}
@@ -143,7 +149,7 @@ const DoctorProfile = () => {
 
                                             height: 20 * heightRef,
                                             width: 20 * heightRef,
-                                            marginRight:8
+                                            marginRight: 8
 
 
 
@@ -167,17 +173,18 @@ const DoctorProfile = () => {
                             </View>
                         </ScrollView>
                     </View>
-                 <TouchableOpacity style={{position:'absolute', top:14 * heightRef, left:14 * widthRef,
-                    width:40 * widthRef, height:40 * heightRef, backgroundColor:'white', borderRadius:10,
-                    justifyContent:'center', alignItems:'center'
-                 }} onPress={()=> navigation.goBack()}>
-                 <Iconss name={'chevron-back-outline'} size={30} color={'black'} />
-                 </TouchableOpacity>
+                    <TouchableOpacity style={{
+                        position: 'absolute', top: 14 * heightRef, left: 14 * widthRef,
+                        width: 40 * widthRef, height: 40 * heightRef, backgroundColor: 'white', borderRadius: 10,
+                        justifyContent: 'center', alignItems: 'center'
+                    }} onPress={() => navigation.goBack()}>
+                        <Iconss name={'chevron-back-outline'} size={30} color={'black'} />
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
             <TouchableOpacity style={styles.buttonWrapper} onPress={() =>
                 navigation.navigate('schedule-appointment', {
-                   data: data
+                    data: data
                 }
                 )
 
@@ -214,7 +221,7 @@ const styles = StyleSheet.create({
     text4: {
         color: "white",
         fontWeight: "bold",
-        fontSize:18 * fontRef
+        fontSize: 18 * fontRef
     },
     loginRealContainer: {
         backgroundColor: "#1877F2",
@@ -248,7 +255,7 @@ const styles = StyleSheet.create({
     },
     t0: {
         fontWeight: "bold",
-        color:"black",
+        color: "black",
         fontSize: 12 * fontRef
     },
     rectContainer: {
